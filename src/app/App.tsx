@@ -6,6 +6,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Calendar } from "./pages/Calendar";
 import { Insights } from "./pages/Insights";
 import { Todos } from "./pages/Todos";
+import { Goals } from "./pages/Goals";
 import { useAssignments } from "./lib/store";
 import type { AppContext } from "./lib/context";
 import type { Assignment, Status } from "./lib/types";
@@ -55,6 +56,7 @@ export default function App() {
             <Route index element={<Dashboard />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="todos" element={<Todos />} />
+            <Route path="goals" element={<Goals />} />
             <Route path="insights" element={<Insights />} />
             <Route path="*" element={<Dashboard />} />
           </Route>

@@ -10,6 +10,7 @@ const NAV = [
   { to: "/", label: "Tasks", end: true },
   { to: "/calendar", label: "Calendar", end: false },
   { to: "/todos", label: "To-Do", end: false },
+  { to: "/goals", label: "Goals", end: false },
   { to: "/insights", label: "Insights", end: false },
 ];
 

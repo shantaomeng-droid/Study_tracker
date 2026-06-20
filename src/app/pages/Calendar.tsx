@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router";
+import { ChevronLeft, ChevronRight, CheckSquare } from "lucide-react";
 import { useApp } from "../lib/context";
+import { useTodos } from "../lib/todos";
 import { priorityColor } from "../lib/types";
 import type { Assignment } from "../lib/types";
 
@@ -25,6 +27,8 @@ function ymd(d: Date) {
 
 export function Calendar() {
   const { assignments, openEdit } = useApp();
+  const [todos] = useTodos();
+  const navigate = useNavigate();
   const today = new Date();
   const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
 
@@ -38,6 +42,16 @@ export function Calendar() {
     }
     return map;
   }, [assignments]);
+
+  // Count of unfinished to-dos per day, so the calendar reflects the daily lists.
+  const todoCount = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const t of todos) {
+      if (t.done) continue;
+      map.set(t.date, (map.get(t.date) ?? 0) + 1);
+    }
+    return map;
+  }, [todos]);
 
   // Build the grid of days (leading blanks so the 1st lands on the right weekday; Mon-first).
   const year = cursor.getFullYear();
@@ -96,8 +110,10 @@ export function Calendar() {
         ))}
         {cells.map((date, i) => {
           const key = date ? ymd(date) : `blank-${i}`;
-          const items = date ? byDate.get(ymd(date)) ?? [] : [];
-          const isToday = date && ymd(date) === todayStr;
+          const dateStr = date ? ymd(date) : "";
+          const items = date ? byDate.get(dateStr) ?? [] : [];
+          const todos = date ? todoCount.get(dateStr) ?? 0 : 0;
+          const isToday = date && dateStr === todayStr;
           return (
             <div
               key={key}
@@ -108,12 +124,27 @@ export function Calendar() {
               {date && (
                 <>
                   <div className="flex items-center justify-between mb-1">
-                    <span
-                      className={`text-[11px] ${isToday ? "text-accent font-medium" : "text-muted-foreground"}`}
+                    <button
+                      onClick={() => navigate(`/todos?d=${dateStr}`)}
+                      title={`Open to-do list for ${dateStr}`}
+                      className={`text-[11px] hover:text-accent transition-colors ${
+                        isToday ? "text-accent font-medium" : "text-muted-foreground"
+                      }`}
                       style={mono}
                     >
                       {date.getDate()}
-                    </span>
+                    </button>
+                    {todos > 0 && (
+                      <button
+                        onClick={() => navigate(`/todos?d=${dateStr}`)}
+                        title={`${todos} to-do${todos > 1 ? "s" : ""}`}
+                        className="flex items-center gap-0.5 text-[9px] text-muted-foreground hover:text-accent transition-colors"
+                        style={mono}
+                      >
+                        <CheckSquare size={9} />
+                        {todos}
+                      </button>
+                    )}
                   </div>
                   <div className="flex flex-col gap-1">
                     {items.map((a) => (
