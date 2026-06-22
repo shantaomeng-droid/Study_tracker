@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
 import type { Assignment, Priority } from "../lib/types";
 import { TOPICS } from "../lib/types";
 
@@ -59,9 +59,10 @@ export function TaskModal({ editing, onClose, onSubmit }: Props) {
     });
   }
 
-  const labelCls = "text-[10px] tracking-[0.2em] uppercase text-muted-foreground block mb-2";
+  const labelCls = "text-[11px] tracking-[0.14em] uppercase text-foreground font-medium block mb-1.5";
+  const hintCls = "text-[11px] text-muted-foreground mb-2";
   const fieldCls =
-    "w-full bg-input-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-foreground transition-colors";
+    "w-full bg-input-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-foreground focus:ring-1 focus:ring-ring transition-colors";
 
   return (
     <div
@@ -70,17 +71,25 @@ export function TaskModal({ editing, onClose, onSubmit }: Props) {
     >
       <div className="bg-background w-full max-w-lg border border-border" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-8 py-5 border-b border-border">
-          <span className="text-xs tracking-[0.2em] uppercase" style={mono}>
-            {editing ? "Edit Assignment" : "New Assignment"}
-          </span>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
+          <div>
+            <span className="text-sm tracking-[0.16em] uppercase font-medium" style={mono}>
+              {editing ? "Edit Assignment" : "New Assignment"}
+            </span>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              {editing ? "Update the details below." : "Fill in the details to add a task."}
+            </p>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Close" title="Close">
             <X size={16} />
           </button>
         </div>
 
         <div className="px-8 py-6 flex flex-col gap-5">
           <div>
-            <label className={labelCls} style={mono}>Task Title *</label>
+            <label className={labelCls} style={mono}>
+              Task Title <span className="text-accent">(required)</span>
+            </label>
+            <p className={hintCls}>What do you need to do?</p>
             <input
               type="text"
               value={form.title}
@@ -94,33 +103,40 @@ export function TaskModal({ editing, onClose, onSubmit }: Props) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls} style={mono}>Topic</label>
-              <select
-                value={form.topic}
-                onChange={(e) => setForm((f) => ({ ...f, topic: e.target.value }))}
-                className={fieldCls + " appearance-none cursor-pointer"}
-                style={sans}
-              >
-                {TOPICS.map((t) => <option key={t} value={t}>{t}</option>)}
-              </select>
+              <label className={labelCls} style={mono}>Subject / Topic</label>
+              <div className="relative">
+                <select
+                  value={form.topic}
+                  onChange={(e) => setForm((f) => ({ ...f, topic: e.target.value }))}
+                  className={fieldCls + " appearance-none cursor-pointer pr-9"}
+                  style={sans}
+                >
+                  {TOPICS.map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              </div>
             </div>
             <div>
               <label className={labelCls} style={mono}>Priority</label>
-              <select
-                value={form.priority}
-                onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value as Priority }))}
-                className={fieldCls + " appearance-none cursor-pointer"}
-                style={sans}
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={form.priority}
+                  onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value as Priority }))}
+                  className={fieldCls + " appearance-none cursor-pointer pr-9"}
+                  style={sans}
+                >
+                  <option value="low">Low — can wait</option>
+                  <option value="medium">Medium — soon</option>
+                  <option value="high">High — urgent</option>
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              </div>
             </div>
           </div>
 
           <div>
             <label className={labelCls} style={mono}>Due Date</label>
+            <p className={hintCls}>Leave blank if there's no deadline.</p>
             <input
               type="date"
               value={form.dueDate}
@@ -131,11 +147,11 @@ export function TaskModal({ editing, onClose, onSubmit }: Props) {
           </div>
 
           <div>
-            <label className={labelCls} style={mono}>Notes</label>
+            <label className={labelCls} style={mono}>Notes <span className="text-muted-foreground font-normal normal-case tracking-normal">(optional)</span></label>
             <textarea
               value={form.notes}
               onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-              placeholder="Any extra details..."
+              placeholder="Any extra details, links, or reminders…"
               rows={3}
               className={fieldCls + " resize-none placeholder:text-muted-foreground/50"}
             />

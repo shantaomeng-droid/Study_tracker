@@ -218,17 +218,19 @@ export function Goals() {
                         <div className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100">
                           <button
                             onClick={() => startEdit(g)}
-                            className="text-muted-foreground hover:text-foreground transition-colors p-1"
-                            aria-label="Edit"
+                            className="text-muted-foreground hover:text-foreground hover:bg-card transition-colors p-1.5"
+                            aria-label="Edit goal"
+                            title="Edit goal"
                           >
-                            <Pencil size={13} />
+                            <Pencil size={14} />
                           </button>
                           <button
                             onClick={() => remove(g.id)}
-                            className="text-muted-foreground hover:text-accent transition-colors p-1"
-                            aria-label="Delete"
+                            className="text-muted-foreground hover:text-accent hover:bg-card transition-colors p-1.5"
+                            aria-label="Delete goal"
+                            title="Delete goal"
                           >
-                            <Trash2 size={13} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </div>

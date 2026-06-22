@@ -19,7 +19,7 @@ const STATUS_COLORS: Record<Status, string> = {
 function Stat({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
   return (
     <div className="border-r border-b border-border px-6 py-6">
-      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2" style={mono}>{label}</p>
+      <p className="text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-2" style={mono}>{label}</p>
       <p className={`text-4xl font-bold ${accent ? "text-accent" : ""}`} style={serif}>{value}</p>
     </div>
   );
@@ -58,7 +58,12 @@ export function Insights() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold border-t border-border pt-6 mb-8" style={serif}>Insights</h1>
+      <div className="border-t border-border pt-6 mb-8">
+        <h1 className="text-3xl font-bold" style={serif}>Insights</h1>
+        <p className="text-sm text-muted-foreground mt-2">
+          A quick overview of your progress — totals, completion rate, and how your work breaks down.
+        </p>
+      </div>
 
       {/* Headline stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 border-t border-l border-border mb-12">
@@ -71,7 +76,7 @@ export function Insights() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* By topic */}
         <div className="border-t border-border pt-6">
-          <h2 className="text-xs tracking-[0.25em] uppercase mb-6" style={mono}>Tasks by Topic</h2>
+          <h2 className="text-sm tracking-[0.16em] uppercase font-medium mb-6" style={mono}>Tasks by Topic</h2>
           {byTopic.length === 0 ? (
             <p className="text-sm text-muted-foreground" style={serif}>No data yet.</p>
           ) : (
@@ -95,7 +100,7 @@ export function Insights() {
 
         {/* By status */}
         <div className="border-t border-border pt-6">
-          <h2 className="text-xs tracking-[0.25em] uppercase mb-6" style={mono}>Status Breakdown</h2>
+          <h2 className="text-sm tracking-[0.16em] uppercase font-medium mb-6" style={mono}>Status Breakdown</h2>
           {byStatus.length === 0 ? (
             <p className="text-sm text-muted-foreground" style={serif}>No data yet.</p>
           ) : (

@@ -151,16 +151,17 @@ export function Todos() {
 
       {/* Toolbar */}
       <div className="flex items-center justify-between flex-wrap gap-3 pb-4">
-        <span className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground" style={mono}>
+        <span className="text-[11px] tracking-[0.14em] uppercase text-muted-foreground" style={mono}>
           {dayTodos.length === 0 ? "Nothing planned" : `${remaining} left · ${completed} done`}
         </span>
         {completed > 0 && (
           <button
             onClick={clearCompleted}
-            className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground hover:text-accent transition-colors"
+            className="flex items-center gap-1.5 text-[11px] tracking-[0.12em] uppercase text-muted-foreground hover:text-accent transition-colors"
             style={mono}
+            title="Remove all completed to-dos for this day"
           >
-            Clear done ({completed})
+            <Trash2 size={12} /> Clear done ({completed})
           </button>
         )}
       </div>
@@ -218,17 +219,19 @@ export function Todos() {
                 <div className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100">
                   <button
                     onClick={() => startEdit(t)}
-                    className="text-muted-foreground hover:text-foreground transition-colors p-1"
-                    aria-label="Edit"
+                    className="text-muted-foreground hover:text-foreground hover:bg-card transition-colors p-1.5"
+                    aria-label="Edit to-do"
+                    title="Edit to-do"
                   >
-                    <Pencil size={13} />
+                    <Pencil size={14} />
                   </button>
                   <button
                     onClick={() => remove(t.id)}
-                    className="text-muted-foreground hover:text-accent transition-colors p-1"
-                    aria-label="Delete"
+                    className="text-muted-foreground hover:text-accent hover:bg-card transition-colors p-1.5"
+                    aria-label="Delete to-do"
+                    title="Delete to-do"
                   >
-                    <Trash2 size={13} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>

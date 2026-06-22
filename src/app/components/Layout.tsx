@@ -1,26 +1,30 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import { Plus, Sun, Moon, Menu, X } from "lucide-react";
+import { Plus, Sun, Moon, Menu, X, ListChecks, CalendarDays, ClipboardCheck, Target, BarChart3 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { AppContext } from "../lib/context";
 import { useTheme } from "../lib/theme";
 
 const mono = { fontFamily: "'DM Mono', monospace" } as const;
 
-const NAV = [
-  { to: "/", label: "Tasks", end: true },
-  { to: "/calendar", label: "Calendar", end: false },
-  { to: "/todos", label: "To-Do", end: false },
-  { to: "/goals", label: "Goals", end: false },
-  { to: "/insights", label: "Insights", end: false },
+const NAV: { to: string; label: string; end: boolean; icon: LucideIcon }[] = [
+  { to: "/", label: "Tasks", end: true, icon: ListChecks },
+  { to: "/calendar", label: "Calendar", end: false, icon: CalendarDays },
+  { to: "/todos", label: "To-Do", end: false, icon: ClipboardCheck },
+  { to: "/goals", label: "Goals", end: false, icon: Target },
+  { to: "/insights", label: "Insights", end: false, icon: BarChart3 },
 ];
 
 export function Layout({ ctx }: { ctx: AppContext }) {
   const { theme, toggle } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Desktop nav: icon + label, with a clear underline marking the current page.
   const linkCls = ({ isActive }: { isActive: boolean }) =>
-    `text-[11px] tracking-[0.18em] uppercase transition-colors duration-200 ${
-      isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+    `flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase pb-1 border-b-2 transition-colors duration-200 ${
+      isActive
+        ? "text-foreground border-accent"
+        : "text-muted-foreground border-transparent hover:text-foreground"
     }`;
 
   return (
@@ -31,9 +35,10 @@ export function Layout({ ctx }: { ctx: AppContext }) {
             <NavLink to="/" className="text-sm tracking-[0.2em] uppercase font-medium" style={mono}>
               Study Tracker
             </NavLink>
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-7">
               {NAV.map((n) => (
                 <NavLink key={n.to} to={n.to} end={n.end} className={linkCls} style={mono}>
+                  <n.icon size={14} strokeWidth={2} />
                   {n.label}
                 </NavLink>
               ))}
@@ -43,8 +48,9 @@ export function Layout({ ctx }: { ctx: AppContext }) {
           <div className="flex items-center gap-3">
             <button
               onClick={toggle}
-              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Toggle theme"
+              className="p-2 border border-border text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
               {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
             </button>
@@ -52,6 +58,7 @@ export function Layout({ ctx }: { ctx: AppContext }) {
               onClick={ctx.openAdd}
               className="hidden sm:flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-xs tracking-[0.15em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
               style={mono}
+              title="Create a new assignment"
             >
               <Plus size={14} />
               Add Task
@@ -68,25 +75,30 @@ export function Layout({ ctx }: { ctx: AppContext }) {
 
         {/* Mobile nav */}
         {menuOpen && (
-          <nav className="md:hidden border-t border-border px-6 py-4 flex flex-col gap-4">
+          <nav className="md:hidden border-t border-border px-6 py-4 flex flex-col gap-1">
             {NAV.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
                 end={n.end}
                 onClick={() => setMenuOpen(false)}
-                className={linkCls}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-2 py-3 text-[12px] tracking-[0.12em] uppercase transition-colors ${
+                    isActive ? "text-foreground bg-card" : "text-muted-foreground hover:text-foreground"
+                  }`
+                }
                 style={mono}
               >
+                <n.icon size={16} strokeWidth={2} />
                 {n.label}
               </NavLink>
             ))}
             <button
               onClick={() => { setMenuOpen(false); ctx.openAdd(); }}
-              className="flex items-center gap-2 text-[11px] tracking-[0.18em] uppercase text-accent"
+              className="flex items-center gap-3 px-2 py-3 mt-2 bg-primary text-primary-foreground text-[12px] tracking-[0.12em] uppercase justify-center"
               style={mono}
             >
-              <Plus size={14} /> Add Task
+              <Plus size={16} /> Add Task
             </button>
           </nav>
         )}
