@@ -11903,10 +11903,8 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
       }
       const ia = { fontFamily: "'DM Mono', monospace" },
         fw = [
-          { to: "/", label: "Tasks", end: !0 },
-          { to: "/calendar", label: "Calendar", end: !1 },
-          { to: "/todos", label: "To-Do", end: !1 },
-          { to: "/goals", label: "Goals", end: !1 },
+          { to: "/", label: "Study Log", end: !0 },
+          { to: "/tasks", label: "Tasks", end: !1 },
           { to: "/insights", label: "Insights", end: !1 },
         ];
       function v$({ ctx: e }) {
@@ -12014,7 +12012,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                 className:
                   "text-[10px] tracking-[0.2em] uppercase text-muted-foreground",
                 style: ia,
-                children: "Study Tracker · Stay on top of every assignment",
+                children: "Study Tracker · A log of everything you've studied",
               }),
             }),
           ],
@@ -12077,8 +12075,6 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
         const [n, a] = R.useState(pw),
           [p, v] = R.useState(!1),
           h = R.useRef(null),
-          [b, _] = R.useState(!1),
-          k = R.useRef(null),
           [editTopic, setEditTopic] = R.useState(null),
           [draft, setDraft] = R.useState(""),
           [adding, setAdding] = R.useState(!1);
@@ -12111,8 +12107,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
         }
         (R.useEffect(() => {
           const g = (S) => {
-            (h.current && !h.current.contains(S.target) && v(!1),
-              k.current && !k.current.contains(S.target) && _(!1));
+            h.current && !h.current.contains(S.target) && v(!1);
           };
           return (
             document.addEventListener("mousedown", g),
@@ -12169,7 +12164,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                   C.jsx("span", {
                     className: "text-xs tracking-[0.2em] uppercase",
                     style: Bn,
-                    children: e ? "Edit Assignment" : "New Assignment",
+                    children: e ? "Edit Entry" : "Log Study",
                   }),
                   C.jsx("button", {
                     onClick: t,
@@ -12187,14 +12182,14 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                       C.jsx("label", {
                         className: l,
                         style: Bn,
-                        children: "Task Title *",
+                        children: "What did you study? *",
                       }),
                       C.jsx("input", {
                         type: "text",
                         value: n.title,
                         onChange: (f) =>
                           a((d) => ({ ...d, title: f.target.value })),
-                        placeholder: "e.g. Quadratic Equations — Ex. 4.3",
+                        placeholder: "e.g. Integration by parts — Ch. 4",
                         className: c + " placeholder:text-muted-foreground/50",
                         onKeyDown: (f) => f.key === "Enter" && u(),
                         autoFocus: !0,
@@ -12437,78 +12432,17 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                           C.jsx("label", {
                             className: l,
                             style: Bn,
-                            children: "Priority",
+                            children: "Date",
                           }),
-                          C.jsxs("div", {
-                            className: "relative",
-                            ref: k,
-                            children: [
-                              C.jsxs("button", {
-                                type: "button",
-                                onClick: () => _((f) => !f),
-                                className:
-                                  c +
-                                  " cursor-pointer flex items-center justify-between text-left",
-                                style: yp,
-                                children: [
-                                  C.jsx("span", { children: y$[n.priority] }),
-                                  C.jsx("svg", {
-                                    width: 14,
-                                    height: 14,
-                                    viewBox: "0 0 24 24",
-                                    fill: "none",
-                                    stroke: "currentColor",
-                                    strokeWidth: 2,
-                                    strokeLinecap: "round",
-                                    strokeLinejoin: "round",
-                                    className: `shrink-0 text-muted-foreground transition-transform duration-200 ${b ? "rotate-180" : ""}`,
-                                    children: C.jsx("polyline", {
-                                      points: "6 9 12 15 18 9",
-                                    }),
-                                  }),
-                                ],
-                              }),
-                              b &&
-                                C.jsx("div", {
-                                  className:
-                                    "absolute z-10 left-0 right-0 mt-1 max-h-60 overflow-auto bg-background border border-border shadow-lg",
-                                  children: ["low", "medium", "high"].map((f) =>
-                                    C.jsx(
-                                      "button",
-                                      {
-                                        type: "button",
-                                        onClick: () => {
-                                          (a((d) => ({ ...d, priority: f })),
-                                            _(!1));
-                                        },
-                                        className: `w-full text-left px-4 py-2.5 text-sm transition-colors duration-150 ${n.priority === f ? "bg-secondary text-secondary-foreground" : "hover:bg-card"}`,
-                                        style: yp,
-                                        children: y$[f],
-                                      },
-                                      f,
-                                    ),
-                                  ),
-                                }),
-                            ],
+                          C.jsx("input", {
+                            type: "date",
+                            value: n.dueDate,
+                            onChange: (f) =>
+                              a((d) => ({ ...d, dueDate: f.target.value })),
+                            className: c,
+                            style: yp,
                           }),
                         ],
-                      }),
-                    ],
-                  }),
-                  C.jsxs("div", {
-                    children: [
-                      C.jsx("label", {
-                        className: l,
-                        style: Bn,
-                        children: "Due Date",
-                      }),
-                      C.jsx("input", {
-                        type: "date",
-                        value: n.dueDate,
-                        onChange: (f) =>
-                          a((d) => ({ ...d, dueDate: f.target.value })),
-                        className: c,
-                        style: yp,
                       }),
                     ],
                   }),
@@ -12540,7 +12474,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                         className:
                           "flex-1 bg-primary text-primary-foreground py-3 text-xs tracking-[0.18em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed",
                         style: Bn,
-                        children: e ? "Save Changes" : "Add Assignment",
+                        children: e ? "Save Changes" : "Log Study",
                       }),
                       C.jsx("button", {
                         onClick: t,
@@ -12563,313 +12497,342 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
       const Qt = { fontFamily: "'DM Mono', monospace" },
         gp = { fontFamily: "'Playfair Display', serif" },
         b$ = [
-          { key: "due", label: "Due Date" },
-          { key: "priority", label: "Priority" },
+          { key: "date", label: "Date" },
+          { key: "topic", label: "Topic" },
           { key: "title", label: "Title" },
         ];
       function hw() {
-        const {
-            assignments: e,
-            setStatus: t,
-            remove: r,
-            openEdit: n,
-            openAdd: o,
-          } = l0(),
-          [a, u] = R.useState("all"),
-          [l, c] = R.useState("due"),
+        const { assignments: e, remove: r, openEdit: n, openAdd: o } = l0(),
+          [l, c] = R.useState("date"),
           [f, d] = R.useState(null),
-          v = {
-            all: e.length,
-            todo: e.filter((g) => g.status === "todo").length,
-            "in-progress": e.filter((g) => g.status === "in-progress").length,
-            done: e.filter((g) => g.status === "done").length,
-          },
-          h = e.length ? Math.round((v.done / e.length) * 100) : 0,
-          y = (a === "all" ? e : e.filter((g) => g.status === a))
+          y = e
             .slice()
             .sort((g, S) =>
-              l === "due"
-                ? g.dueDate
-                  ? S.dueDate
-                    ? g.dueDate.localeCompare(S.dueDate)
-                    : -1
-                  : 1
-                : l === "priority"
-                  ? dw[g.priority] - dw[S.priority]
+              l === "date"
+                ? (S.dueDate || "").localeCompare(g.dueDate || "")
+                : l === "topic"
+                  ? g.topic.localeCompare(S.topic)
                   : g.title.localeCompare(S.title),
             );
         return C.jsxs(C.Fragment, {
           children: [
-            C.jsx("div", {
-              className:
-                "grid grid-cols-2 md:grid-cols-4 border-t border-l border-border mb-12",
-              children: ["all", "todo", "in-progress", "done"].map((g) =>
-                C.jsxs(
-                  "button",
-                  {
-                    onClick: () => u(g),
-                    className: `border-r border-b border-border px-6 py-6 text-left transition-colors duration-200 ${a === g ? "bg-primary text-primary-foreground" : "hover:bg-card"}`,
-                    children: [
-                      C.jsx("p", {
-                        className: `text-[10px] tracking-[0.2em] uppercase mb-2 ${a === g ? "text-primary-foreground/60" : "text-muted-foreground"}`,
-                        style: Qt,
-                        children: g === "all" ? "All Tasks" : As[g],
-                      }),
-                      C.jsx("p", {
-                        className: "text-4xl font-bold",
-                        style: gp,
-                        children: v[g],
-                      }),
-                    ],
-                  },
-                  g,
-                ),
-              ),
-            }),
             C.jsxs("div", {
-              className: "mb-12",
+              className:
+                "flex items-center justify-between flex-wrap gap-4 border-t border-border pt-6 mb-8",
               children: [
-                C.jsxs("div", {
-                  className: "flex justify-between items-baseline mb-3",
-                  children: [
-                    C.jsx("h2", {
-                      className: "text-xs tracking-[0.25em] uppercase",
-                      style: Qt,
-                      children: "Overall Progress",
-                    }),
-                    C.jsxs("span", {
-                      className: "text-xs text-muted-foreground",
-                      style: Qt,
-                      children: [v.done, " of ", v.all, " complete"],
-                    }),
-                  ],
+                C.jsx("h1", {
+                  className: "text-3xl font-bold",
+                  style: gp,
+                  children: "Study Log",
                 }),
-                C.jsx("div", {
-                  className: "h-1.5 w-full bg-muted",
-                  children: C.jsx("div", {
-                    className: "h-full bg-accent transition-all duration-500",
-                    style: { width: `${h}%` },
-                  }),
-                }),
-                C.jsxs("p", {
-                  className: "mt-2 text-xs text-muted-foreground",
+                C.jsxs("button", {
+                  onClick: o,
+                  className:
+                    "flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-[10px] tracking-[0.15em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200",
                   style: Qt,
-                  children: [h, "%"],
+                  children: [C.jsx(Ms, { size: 14 }), "Log Study"],
                 }),
               ],
             }),
             C.jsxs("div", {
-              className: "border-t border-border",
+              className:
+                "flex items-center justify-between flex-wrap gap-3 border-t border-border pt-6 pb-2",
               children: [
-                C.jsxs("div", {
-                  className:
-                    "flex items-center justify-between flex-wrap gap-3 pb-6 pt-6",
+                C.jsxs("span", {
+                  className: "text-xs text-muted-foreground",
+                  style: Qt,
                   children: [
-                    C.jsx("h2", {
-                      className: "text-xs tracking-[0.25em] uppercase",
+                    y.length,
+                    " ",
+                    y.length === 1 ? "entry" : "entries",
+                  ],
+                }),
+                C.jsxs("div", {
+                  className: "flex items-center gap-3",
+                  children: [
+                    C.jsx("span", {
+                      className:
+                        "text-[10px] tracking-[0.18em] uppercase text-muted-foreground",
                       style: Qt,
-                      children: a === "all" ? "All Assignments" : As[a],
+                      children: "Sort",
                     }),
-                    C.jsxs("div", {
-                      className: "flex items-center gap-3",
-                      children: [
-                        C.jsx("span", {
-                          className:
-                            "text-[10px] tracking-[0.18em] uppercase text-muted-foreground",
-                          style: Qt,
-                          children: "Sort",
-                        }),
-                        C.jsx("div", {
-                          className: "flex border border-border",
-                          children: b$.map((g) =>
-                            C.jsx(
-                              "button",
-                              {
-                                onClick: () => c(g.key),
-                                className: `text-[10px] tracking-[0.15em] uppercase px-3 py-1.5 transition-colors ${l === g.key ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:text-foreground"}`,
-                                style: Qt,
-                                children: g.label,
-                              },
-                              g.key,
-                            ),
-                          ),
-                        }),
-                        C.jsxs("span", {
-                          className: "text-xs text-muted-foreground",
-                          style: Qt,
-                          children: [
-                            y.length,
-                            " ",
-                            y.length === 1 ? "task" : "tasks",
-                          ],
-                        }),
-                        C.jsxs("button", {
-                          onClick: o,
-                          className:
-                            "flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 text-[10px] tracking-[0.15em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200",
-                          style: Qt,
-                          children: [C.jsx(Ms, { size: 14 }), "Add Task"],
-                        }),
-                      ],
+                    C.jsx("div", {
+                      className: "flex border border-border",
+                      children: b$.map((g) =>
+                        C.jsx(
+                          "button",
+                          {
+                            onClick: () => c(g.key),
+                            className: `text-[10px] tracking-[0.15em] uppercase px-3 py-1.5 transition-colors ${l === g.key ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:text-foreground"}`,
+                            style: Qt,
+                            children: g.label,
+                          },
+                          g.key,
+                        ),
+                      ),
                     }),
                   ],
                 }),
-                y.length === 0 &&
-                  C.jsx("div", {
-                    className:
-                      "py-16 text-center border border-border border-dashed",
-                    children: C.jsx("p", {
-                      className: "text-muted-foreground text-sm",
-                      style: gp,
-                      children: "No tasks here — enjoy the silence.",
-                    }),
-                  }),
-                C.jsx("div", {
-                  className: "flex flex-col",
-                  children: y.map((g) =>
-                    C.jsxs(
-                      "div",
-                      {
-                        className: `border-b border-border ${g.status === "done" ? "opacity-60" : ""}`,
+              ],
+            }),
+            y.length === 0 &&
+              C.jsx("div", {
+                className:
+                  "py-16 text-center border border-border border-dashed",
+                children: C.jsx("p", {
+                  className: "text-muted-foreground text-sm",
+                  style: gp,
+                  children: "Nothing logged yet — add your first study entry.",
+                }),
+              }),
+            C.jsx("div", {
+              className: "flex flex-col",
+              children: y.map((g) =>
+                C.jsxs(
+                  "div",
+                  {
+                    className: "border-b border-border",
+                    children: [
+                      C.jsxs("div", {
+                        className:
+                          "flex items-start gap-4 py-5 cursor-pointer hover:bg-card transition-colors duration-150 px-2 -mx-2",
+                        onClick: () => d((S) => (S === g.id ? null : g.id)),
                         children: [
                           C.jsxs("div", {
-                            className:
-                              "flex items-start gap-4 py-5 cursor-pointer hover:bg-card transition-colors duration-150 px-2 -mx-2",
-                            onClick: () => d((S) => (S === g.id ? null : g.id)),
+                            className: "flex-1 min-w-0",
                             children: [
-                              C.jsx("button", {
-                                onClick: (S) => {
-                                  (S.stopPropagation(),
-                                    t(
-                                      g.id,
-                                      g.status === "done" ? "todo" : "done",
-                                    ));
-                                },
-                                className: `mt-0.5 shrink-0 w-5 h-5 border flex items-center justify-center transition-colors duration-200 ${g.status === "done" ? "bg-primary border-primary text-primary-foreground" : "border-border hover:border-accent"}`,
-                                "aria-label": "Toggle complete",
-                                children:
-                                  g.status === "done" &&
-                                  C.jsx(Cs, { size: 11, strokeWidth: 3 }),
-                              }),
                               C.jsxs("div", {
-                                className: "flex-1 min-w-0",
+                                className:
+                                  "flex flex-wrap items-baseline gap-x-3 gap-y-1",
                                 children: [
-                                  C.jsxs("div", {
-                                    className:
-                                      "flex flex-wrap items-baseline gap-x-3 gap-y-1",
-                                    children: [
-                                      C.jsx("span", {
-                                        className: `text-base leading-snug ${g.status === "done" ? "line-through" : ""}`,
-                                        style: gp,
-                                        children: g.title,
-                                      }),
-                                      C.jsx("span", {
-                                        className:
-                                          "text-[10px] tracking-[0.15em] uppercase text-muted-foreground",
-                                        style: Qt,
-                                        children: g.topic,
-                                      }),
-                                    ],
+                                  C.jsx("span", {
+                                    className: "text-base leading-snug",
+                                    style: gp,
+                                    children: g.title,
                                   }),
-                                  C.jsxs("div", {
+                                  C.jsx("span", {
                                     className:
-                                      "flex flex-wrap gap-x-4 mt-1 items-center",
-                                    children: [
-                                      C.jsxs("span", {
-                                        className: `text-[10px] tracking-[0.15em] uppercase ${jy(g.dueDate, g.status) ? "text-accent font-medium" : "text-muted-foreground"}`,
-                                        style: Qt,
-                                        children: [
-                                          jy(g.dueDate, g.status)
-                                            ? "Overdue · "
-                                            : "",
-                                          u0(g.dueDate),
-                                        ],
-                                      }),
-                                      C.jsxs("span", {
-                                        className: `text-[10px] tracking-[0.15em] uppercase ${$T[g.priority]}`,
-                                        style: Qt,
-                                        children: [y$[g.priority], " priority"],
-                                      }),
-                                    ],
-                                  }),
-                                ],
-                              }),
-                              C.jsxs("div", {
-                                className: "flex items-center gap-3 shrink-0",
-                                children: [
-                                  C.jsx("select", {
-                                    value: g.status,
-                                    onClick: (S) => S.stopPropagation(),
-                                    onChange: (S) => {
-                                      (S.stopPropagation(),
-                                        t(g.id, S.target.value));
-                                    },
-                                    className:
-                                      "text-[10px] tracking-[0.15em] uppercase bg-secondary text-secondary-foreground border border-border px-2 py-1 cursor-pointer appearance-none focus:outline-none hover:border-foreground transition-colors",
+                                      "text-[10px] tracking-[0.15em] uppercase text-muted-foreground",
                                     style: Qt,
-                                    children: [
-                                      "todo",
-                                      "in-progress",
-                                      "done",
-                                    ].map((S) =>
-                                      C.jsx(
-                                        "option",
-                                        { value: S, children: As[S] },
-                                        S,
-                                      ),
-                                    ),
-                                  }),
-                                  C.jsx("button", {
-                                    onClick: (S) => {
-                                      (S.stopPropagation(), n(g));
-                                    },
-                                    className:
-                                      "text-muted-foreground hover:text-foreground transition-colors p-1",
-                                    "aria-label": "Edit",
-                                    children: C.jsx(i0, { size: 13 }),
-                                  }),
-                                  C.jsx("button", {
-                                    onClick: (S) => {
-                                      (S.stopPropagation(), r(g.id));
-                                    },
-                                    className:
-                                      "text-muted-foreground hover:text-accent transition-colors p-1",
-                                    "aria-label": "Delete",
-                                    children: C.jsx(a0, { size: 13 }),
-                                  }),
-                                  C.jsx(ZR, {
-                                    size: 14,
-                                    className: `text-muted-foreground transition-transform duration-200 ${f === g.id ? "rotate-180" : ""}`,
+                                    children: g.topic,
                                   }),
                                 ],
+                              }),
+                              C.jsx("div", {
+                                className: "mt-1",
+                                children: C.jsx("span", {
+                                  className:
+                                    "text-[10px] tracking-[0.15em] uppercase text-muted-foreground",
+                                  style: Qt,
+                                  children: u0(g.dueDate),
+                                }),
                               }),
                             ],
                           }),
-                          f === g.id &&
-                            C.jsxs("div", {
-                              className: "pb-5 px-9",
-                              children: [
-                                C.jsx("p", {
-                                  className:
-                                    "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-1",
-                                  style: Qt,
-                                  children: "Notes",
-                                }),
-                                C.jsx("p", {
-                                  className:
-                                    "text-sm text-muted-foreground leading-relaxed",
-                                  children: g.notes || "No notes added.",
-                                }),
-                              ],
-                            }),
+                          C.jsxs("div", {
+                            className: "flex items-center gap-3 shrink-0",
+                            children: [
+                              C.jsx("button", {
+                                onClick: (S) => {
+                                  (S.stopPropagation(), n(g));
+                                },
+                                className:
+                                  "text-muted-foreground hover:text-foreground transition-colors p-1",
+                                "aria-label": "Edit",
+                                children: C.jsx(i0, { size: 13 }),
+                              }),
+                              C.jsx("button", {
+                                onClick: (S) => {
+                                  (S.stopPropagation(), r(g.id));
+                                },
+                                className:
+                                  "text-muted-foreground hover:text-accent transition-colors p-1",
+                                "aria-label": "Delete",
+                                children: C.jsx(a0, { size: 13 }),
+                              }),
+                              C.jsx(ZR, {
+                                size: 14,
+                                className: `text-muted-foreground transition-transform duration-200 ${f === g.id ? "rotate-180" : ""}`,
+                              }),
+                            ],
+                          }),
                         ],
-                      },
-                      g.id,
-                    ),
-                  ),
+                      }),
+                      f === g.id &&
+                        C.jsxs("div", {
+                          className: "pb-5 px-2",
+                          children: [
+                            C.jsx("p", {
+                              className:
+                                "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-1",
+                              style: Qt,
+                              children: "Notes",
+                            }),
+                            C.jsx("p", {
+                              className:
+                                "text-sm text-muted-foreground leading-relaxed",
+                              children: g.notes || "No notes added.",
+                            }),
+                          ],
+                        }),
+                    ],
+                  },
+                  g.id,
+                ),
+              ),
+            }),
+          ],
+        });
+      }
+      function TasksPage() {
+        const [tasks, setTasks] = LT(),
+          [taskText, setTaskText] = R.useState(""),
+          [editTaskId, setEditTaskId] = R.useState(null),
+          [editTaskText, setEditTaskText] = R.useState(""),
+          ot = tasks
+            .slice()
+            .sort((g, S) => (g.done === S.done ? 0 : g.done ? 1 : -1));
+        function addTask() {
+          const m = taskText.trim();
+          m &&
+            (setTasks((q) => [
+              { id: Date.now().toString(), text: m, done: !1, date: Un() },
+              ...q,
+            ]),
+            setTaskText(""));
+        }
+        function toggleTask(m) {
+          setTasks((q) =>
+            q.map((S) => (S.id === m ? { ...S, done: !S.done } : S)),
+          );
+        }
+        function delTask(m) {
+          setTasks((q) => q.filter((S) => S.id !== m));
+        }
+        function startTaskEdit(m) {
+          (setEditTaskId(m.id), setEditTaskText(m.text));
+        }
+        function commitTaskEdit() {
+          const m = editTaskText.trim();
+          (m &&
+            setTasks((q) =>
+              q.map((S) => (S.id === editTaskId ? { ...S, text: m } : S)),
+            ),
+            setEditTaskId(null),
+            setEditTaskText(""));
+        }
+        return C.jsxs(C.Fragment, {
+          children: [
+            C.jsxs("div", {
+              className:
+                "flex items-center justify-between flex-wrap gap-4 border-t border-border pt-6 mb-8",
+              children: [
+                C.jsx("h1", {
+                  className: "text-3xl font-bold",
+                  style: gp,
+                  children: "What I Need To Do",
+                }),
+                C.jsxs("span", {
+                  className: "text-xs text-muted-foreground",
+                  style: Qt,
+                  children: [tasks.filter((m) => !m.done).length, " open"],
                 }),
               ],
             }),
+            C.jsxs("div", {
+              className: "flex items-center gap-3 mb-6",
+              children: [
+                C.jsx("input", {
+                  type: "text",
+                  value: taskText,
+                  autoFocus: !0,
+                  onChange: (m) => setTaskText(m.target.value),
+                  onKeyDown: (m) => m.key === "Enter" && addTask(),
+                  placeholder: "Add something you need to do…",
+                  className:
+                    "flex-1 min-w-0 bg-input-background border border-border px-4 py-2.5 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50",
+                }),
+                C.jsxs("button", {
+                  onClick: addTask,
+                  disabled: !taskText.trim(),
+                  className:
+                    "flex items-center gap-2 shrink-0 bg-primary text-primary-foreground px-4 py-2.5 text-[10px] tracking-[0.15em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed",
+                  style: Qt,
+                  children: [C.jsx(Ms, { size: 14 }), "Add Task"],
+                }),
+              ],
+            }),
+            tasks.length === 0
+              ? C.jsx("div", {
+                  className:
+                    "py-16 text-center border border-border border-dashed",
+                  children: C.jsx("p", {
+                    className: "text-muted-foreground text-sm",
+                    style: gp,
+                    children: "Nothing to do yet — add your first task.",
+                  }),
+                })
+              : C.jsx("div", {
+                  className: "flex flex-col border-t border-border",
+                  children: ot.map((m) =>
+                    C.jsxs(
+                      "div",
+                      {
+                        className: `flex items-center gap-4 py-3 border-b border-border group ${m.done ? "opacity-60" : ""}`,
+                        children: [
+                          C.jsx("button", {
+                            onClick: () => toggleTask(m.id),
+                            className: `shrink-0 w-5 h-5 border flex items-center justify-center transition-colors duration-200 ${m.done ? "bg-primary border-primary text-primary-foreground" : "border-border hover:border-accent"}`,
+                            "aria-label": "Toggle done",
+                            children:
+                              m.done && C.jsx(Cs, { size: 11, strokeWidth: 3 }),
+                          }),
+                          editTaskId === m.id
+                            ? C.jsx("input", {
+                                autoFocus: !0,
+                                value: editTaskText,
+                                onChange: (S) => setEditTaskText(S.target.value),
+                                onKeyDown: (S) => {
+                                  S.key === "Enter"
+                                    ? commitTaskEdit()
+                                    : S.key === "Escape" &&
+                                      (setEditTaskId(null), setEditTaskText(""));
+                                },
+                                onBlur: commitTaskEdit,
+                                className:
+                                  "flex-1 min-w-0 bg-input-background border border-border px-2 py-1 text-sm focus:outline-none focus:border-accent",
+                              })
+                            : C.jsx("span", {
+                                onDoubleClick: () => startTaskEdit(m),
+                                className: `flex-1 min-w-0 text-sm ${m.done ? "line-through text-muted-foreground" : ""}`,
+                                children: m.text,
+                              }),
+                          C.jsxs("div", {
+                            className:
+                              "flex items-center gap-1 shrink-0 md:opacity-0 md:group-hover:opacity-100 transition-opacity",
+                            children: [
+                              C.jsx("button", {
+                                onClick: () => startTaskEdit(m),
+                                className:
+                                  "text-muted-foreground hover:text-foreground transition-colors p-1",
+                                "aria-label": "Edit",
+                                children: C.jsx(i0, { size: 13 }),
+                              }),
+                              C.jsx("button", {
+                                onClick: () => delTask(m.id),
+                                className:
+                                  "text-muted-foreground hover:text-accent transition-colors p-1",
+                                "aria-label": "Delete",
+                                children: C.jsx(a0, { size: 13 }),
+                              }),
+                            ],
+                          }),
+                        ],
+                      },
+                      m.id,
+                    ),
+                  ),
+                }),
           ],
         });
       }
@@ -40849,9 +40812,6 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       function CK() {
         const { assignments: e } = l0(),
           t = e.length,
-          r = e.filter((f) => f.status === "done").length,
-          n = e.filter((f) => jy(f.dueDate, f.status)).length,
-          a = t ? Math.round((r / t) * 100) : 0,
           u = R.useMemo(() => {
             const f = new Map();
             for (const d of e) f.set(d.topic, (f.get(d.topic) ?? 0) + 1);
@@ -40859,17 +40819,21 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               .map(([d, v]) => ({ topic: d, count: v }))
               .sort((d, v) => v.count - d.count);
           }, [e]),
-          l = R.useMemo(
-            () =>
-              ["todo", "in-progress", "done"]
-                .map((f) => ({
-                  name: As[f],
-                  value: e.filter((d) => d.status === f).length,
-                  status: f,
-                }))
-                .filter((f) => f.value > 0),
-            [e],
-          ),
+          o = R.useMemo(() => {
+            const f = new Date(),
+              d = new Date(f);
+            d.setDate(f.getDate() - 6);
+            const v = DT(d),
+              S = DT(f),
+              w = S.slice(0, 7);
+            return {
+              week: e.filter(
+                (b) => b.dueDate && b.dueDate >= v && b.dueDate <= S,
+              ).length,
+              month: e.filter((b) => b.dueDate && b.dueDate.slice(0, 7) === w)
+                .length,
+            };
+          }, [e]),
           c = {
             background: "var(--popover)",
             border: "1px solid var(--border)",
@@ -40889,139 +40853,64 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               className:
                 "grid grid-cols-2 md:grid-cols-4 border-t border-l border-border mb-12",
               children: [
-                C.jsx(Ss, { label: "Total Tasks", value: t }),
-                C.jsx(Ss, { label: "Completed", value: r }),
-                C.jsx(Ss, { label: "Completion", value: `${a}%` }),
-                C.jsx(Ss, { label: "Overdue", value: n, accent: n > 0 }),
+                C.jsx(Ss, { label: "Entries", value: t }),
+                C.jsx(Ss, { label: "Topics", value: u.length }),
+                C.jsx(Ss, { label: "This Week", value: o.week }),
+                C.jsx(Ss, { label: "This Month", value: o.month }),
               ],
             }),
             C.jsxs("div", {
-              className: "grid grid-cols-1 lg:grid-cols-2 gap-12",
+              className: "border-t border-border pt-6",
               children: [
-                C.jsxs("div", {
-                  className: "border-t border-border pt-6",
-                  children: [
-                    C.jsx("h2", {
-                      className: "text-xs tracking-[0.25em] uppercase mb-6",
-                      style: Ts,
-                      children: "Tasks by Topic",
-                    }),
-                    u.length === 0
-                      ? C.jsx("p", {
-                          className: "text-sm text-muted-foreground",
-                          style: ks,
-                          children: "No data yet.",
-                        })
-                      : C.jsx(XO, {
-                          width: "100%",
-                          height: Math.max(u.length * 38, 120),
-                          children: C.jsxs(kK, {
-                            data: u,
-                            layout: "vertical",
-                            margin: { left: 0, right: 16 },
-                            children: [
-                              C.jsx(yf, {
-                                type: "number",
-                                hide: !0,
-                                allowDecimals: !1,
-                              }),
-                              C.jsx(gf, {
-                                type: "category",
-                                dataKey: "topic",
-                                width: 92,
-                                tick: {
-                                  fontSize: 10,
-                                  fontFamily: "'DM Mono', monospace",
-                                  fill: "var(--muted-foreground)",
-                                },
-                                axisLine: !1,
-                                tickLine: !1,
-                              }),
-                              C.jsx(kr, {
-                                contentStyle: c,
-                                cursor: { fill: "var(--muted)" },
-                              }),
-                              C.jsx(Mi, {
-                                dataKey: "count",
-                                fill: "var(--accent)",
-                                barSize: 14,
-                                radius: 0,
-                              }),
-                            ],
+                C.jsx("h2", {
+                  className: "text-xs tracking-[0.25em] uppercase mb-6",
+                  style: Ts,
+                  children: "Entries by Topic",
+                }),
+                u.length === 0
+                  ? C.jsx("p", {
+                      className: "text-sm text-muted-foreground",
+                      style: ks,
+                      children: "No data yet.",
+                    })
+                  : C.jsx(XO, {
+                      width: "100%",
+                      height: Math.max(u.length * 38, 120),
+                      children: C.jsxs(kK, {
+                        data: u,
+                        layout: "vertical",
+                        margin: { left: 0, right: 16 },
+                        children: [
+                          C.jsx(yf, {
+                            type: "number",
+                            hide: !0,
+                            allowDecimals: !1,
                           }),
-                        }),
-                  ],
-                }),
-                C.jsxs("div", {
-                  className: "border-t border-border pt-6",
-                  children: [
-                    C.jsx("h2", {
-                      className: "text-xs tracking-[0.25em] uppercase mb-6",
-                      style: Ts,
-                      children: "Status Breakdown",
+                          C.jsx(gf, {
+                            type: "category",
+                            dataKey: "topic",
+                            width: 92,
+                            tick: {
+                              fontSize: 10,
+                              fontFamily: "'DM Mono', monospace",
+                              fill: "var(--muted-foreground)",
+                            },
+                            axisLine: !1,
+                            tickLine: !1,
+                          }),
+                          C.jsx(kr, {
+                            contentStyle: c,
+                            cursor: { fill: "var(--muted)" },
+                          }),
+                          C.jsx(Mi, {
+                            dataKey: "count",
+                            fill: "var(--accent)",
+                            barSize: 14,
+                            radius: 0,
+                          }),
+                        ],
+                      }),
                     }),
-                    l.length === 0
-                      ? C.jsx("p", {
-                          className: "text-sm text-muted-foreground",
-                          style: ks,
-                          children: "No data yet.",
-                        })
-                      : C.jsxs("div", {
-                          className: "flex items-center gap-8",
-                          children: [
-                            C.jsx(XO, {
-                              width: "55%",
-                              height: 200,
-                              children: C.jsxs(jK, {
-                                children: [
-                                  C.jsx(bn, {
-                                    data: l,
-                                    dataKey: "value",
-                                    nameKey: "name",
-                                    innerRadius: 50,
-                                    outerRadius: 80,
-                                    paddingAngle: 2,
-                                    stroke: "var(--background)",
-                                    children: l.map((f) =>
-                                      C.jsx(
-                                        Wc,
-                                        { fill: uT[f.status] },
-                                        f.status,
-                                      ),
-                                    ),
-                                  }),
-                                  C.jsx(kr, { contentStyle: c }),
-                                ],
-                              }),
-                            }),
-                            C.jsx("div", {
-                              className: "flex flex-col gap-3",
-                              children: l.map((f) =>
-                                C.jsxs(
-                                  "div",
-                                  {
-                                    className: "flex items-center gap-2",
-                                    children: [
-                                      C.jsx("span", {
-                                        className: "w-2.5 h-2.5",
-                                        style: { background: uT[f.status] },
-                                      }),
-                                      C.jsxs("span", {
-                                        className:
-                                          "text-[10px] tracking-[0.15em] uppercase text-muted-foreground",
-                                        style: Ts,
-                                        children: [f.name, " · ", f.value],
-                                      }),
-                                    ],
-                                  },
-                                  f.status,
-                                ),
-                              ),
-                            }),
-                          ],
-                        }),
-                  ],
-                }),
               ],
             }),
           ],
@@ -41856,9 +41745,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                   element: C.jsx(v$, { ctx: y }),
                   children: [
                     C.jsx(qn, { index: !0, element: C.jsx(hw, {}) }),
-                    C.jsx(qn, { path: "calendar", element: C.jsx(O$, {}) }),
-                    C.jsx(qn, { path: "todos", element: C.jsx(MK, {}) }),
-                    C.jsx(qn, { path: "goals", element: C.jsx(DK, {}) }),
+                    C.jsx(qn, { path: "tasks", element: C.jsx(TasksPage, {}) }),
                     C.jsx(qn, { path: "insights", element: C.jsx(CK, {}) }),
                     C.jsx(qn, { path: "*", element: C.jsx(hw, {}) }),
                   ],
