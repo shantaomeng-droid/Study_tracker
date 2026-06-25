@@ -11902,14 +11902,11 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
         );
       }
       const ia = { fontFamily: "'DM Mono', monospace" },
-        fw = [
-          { to: "/", label: "Study Log", end: !0 },
-          { to: "/tasks", label: "Tasks", end: !1 },
-          { to: "/insights", label: "Insights", end: !1 },
-        ];
+        fw = [{ to: "/", label: "Home", end: !0 }];
       function v$({ ctx: e }) {
         const { theme: t, toggle: r } = h$(),
           [n, a] = R.useState(!1),
+          [yg, setYg] = useYearGroup(),
           u = ({ isActive: l }) =>
             `text-[11px] tracking-[0.18em] uppercase transition-colors duration-200 ${l ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`;
         return C.jsxs("div", {
@@ -11955,6 +11952,34 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                     C.jsxs("div", {
                       className: "flex items-center gap-3",
                       children: [
+                        C.jsx("select", {
+                          value: yg,
+                          onChange: (l) => setYg(l.target.value),
+                          className:
+                            "bg-input-background border border-border text-xs tracking-[0.12em] uppercase text-muted-foreground focus:outline-none focus:border-foreground cursor-pointer",
+                          style: ia,
+                          "aria-label": "Year group",
+                          children: [
+                            C.jsx("option", { value: "", children: "Year —" }),
+                            C.jsx("option", { value: "9", children: "Year 9" }),
+                            C.jsx("option", {
+                              value: "10",
+                              children: "Year 10",
+                            }),
+                            C.jsx("option", {
+                              value: "11",
+                              children: "Year 11",
+                            }),
+                            C.jsx("option", {
+                              value: "12",
+                              children: "Year 12",
+                            }),
+                            C.jsx("option", {
+                              value: "13",
+                              children: "Year 13",
+                            }),
+                          ],
+                        }),
                         C.jsx("button", {
                           onClick: r,
                           className:
@@ -12238,7 +12263,11 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                               p &&
                                 C.jsxs("div", {
                                   className:
-                                    "absolute z-10 left-0 right-0 mt-1 max-h-60 overflow-auto bg-background border border-border shadow-lg",
+                                    "absolute z-10 left-0 right-0 mt-2 overflow-auto bg-background border border-border shadow-lg",
+                                  style: {
+                                    maxHeight: "min(18rem, 50vh)",
+                                    borderRadius: "var(--radius)",
+                                  },
                                   children: [
                                     tp.map((f) =>
                                       editTopic === f
@@ -12552,12 +12581,12 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                   children: [
                     C.jsx("span", {
                       className:
-                        "text-[10px] tracking-[0.18em] uppercase text-muted-foreground",
+                        "text-base tracking-[0.18em] uppercase text-muted-foreground",
                       style: Qt,
                       children: "Sort",
                     }),
                     C.jsx("div", {
-                      className: "flex border border-border",
+                      className: "flex",
                       children: b$.map((g) =>
                         C.jsx(
                           "button",
@@ -12692,6 +12721,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
           ot = tasks
             .slice()
             .sort((g, S) => (g.done === S.done ? 0 : g.done ? 1 : -1));
+        const [flashId, setFlashId] = R.useState(null);
         function addTask() {
           const m = taskText.trim();
           m &&
@@ -12702,6 +12732,11 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
             setTaskText(""));
         }
         function toggleTask(m) {
+          const S = tasks.find((q) => q.id === m);
+          if (S && !S.done) {
+            setFlashId(m);
+            setTimeout(() => setFlashId((q) => (q === m ? null : q)), 900);
+          }
           setTasks((q) =>
             q.map((S) => (S.id === m ? { ...S, done: !S.done } : S)),
           );
@@ -12778,7 +12813,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                     C.jsxs(
                       "div",
                       {
-                        className: `flex items-center gap-4 py-3 border-b border-border group ${m.done ? "opacity-60" : ""}`,
+                        className: `flex items-center gap-4 py-3 px-2 border-b border-border group ${m.done ? "opacity-60" : ""} ${flashId === m.id ? "task-flash" : ""}`,
                         children: [
                           C.jsx("button", {
                             onClick: () => toggleTask(m.id),
@@ -40842,29 +40877,277 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             fontFamily: "'DM Mono', monospace",
             color: "var(--popover-foreground)",
           };
+        const SH_KEY = "study-tracker:hours";
+        const [hours, setHours] = R.useState(() => {
+          try {
+            const f = localStorage.getItem(SH_KEY);
+            if (!f) return [];
+            const d = JSON.parse(f);
+            return Array.isArray(d)
+              ? d
+                  .filter((v) => v && typeof v.date === "string")
+                  .map((v) => ({ date: v.date, hours: Number(v.hours) || 0 }))
+              : [];
+          } catch {
+            return [];
+          }
+        });
+        R.useEffect(() => {
+          try {
+            localStorage.setItem(SH_KEY, JSON.stringify(hours));
+          } catch {}
+        }, [hours]);
+        const [hoursInput, setHoursInput] = R.useState("");
+        const [editDate, setEditDate] = R.useState(null);
+        const [editValue, setEditValue] = R.useState("");
+        const [hoursError, setHoursError] = R.useState(!1);
+        const [shake, setShake] = R.useState(!1);
+        const POMODORO = { focus: 1500, break: 300 };
+        const [timerMode, setTimerMode] = R.useState("focus");
+        const [secondsLeft, setSecondsLeft] = R.useState(POMODORO.focus);
+        const [running, setRunning] = R.useState(!1);
+        R.useEffect(() => {
+          if (!running) return;
+          const f = setInterval(
+            () => setSecondsLeft((d) => (d > 0 ? d - 1 : 0)),
+            1e3,
+          );
+          return () => clearInterval(f);
+        }, [running]);
+        R.useEffect(() => {
+          if (secondsLeft !== 0 || !running) return;
+          if (timerMode === "focus") {
+            const f = Math.round((POMODORO.focus / 3600) * 100) / 100;
+            setHours((d) => {
+              const v = Un(),
+                S = d.findIndex((b) => b.date === v);
+              if (S >= 0) {
+                const w = d.slice();
+                w[S] = {
+                  ...w[S],
+                  hours: Math.round((w[S].hours + f) * 100) / 100,
+                };
+                return w;
+              }
+              return [...d, { date: v, hours: f }];
+            });
+            (setTimerMode("break"), setSecondsLeft(POMODORO.break));
+          } else (setTimerMode("focus"), setSecondsLeft(POMODORO.focus));
+          setRunning(!1);
+        }, [secondsLeft, running, timerMode]);
+        const [goalStr, setGoalStr] = R.useState(() => {
+          const f = localStorage.getItem("study-tracker:weekly-goal");
+          return f && parseFloat(f) > 0 ? String(parseFloat(f)) : "10";
+        });
+        R.useEffect(() => {
+          try {
+            localStorage.setItem("study-tracker:weekly-goal", goalStr);
+          } catch {}
+        }, [goalStr]);
+        function toggleTimer() {
+          setRunning((f) => !f);
+        }
+        function resetTimer() {
+          (setRunning(!1),
+            setTimerMode("focus"),
+            setSecondsLeft(POMODORO.focus));
+        }
+        function fmtTime(f) {
+          return `${String(Math.floor(f / 60)).padStart(2, "0")}:${String(f % 60).padStart(2, "0")}`;
+        }
+        function logHours() {
+          const f = parseFloat(hoursInput);
+          if (!isFinite(f) || f <= 0) return;
+          if (f > 16) {
+            setHoursError(!0);
+            (setShake(!1), requestAnimationFrame(() => setShake(!0)));
+            return;
+          }
+          if (
+            f > 8 &&
+            !window.confirm(
+              `Did you really study ${f} hours today? That's a lot — log it anyway?`,
+            )
+          )
+            return;
+          setHoursError(!1);
+          const d = Un();
+          setHours((v) => {
+            const S = v.findIndex((b) => b.date === d);
+            if (S >= 0) {
+              const w = v.slice();
+              w[S] = { ...w[S], hours: w[S].hours + f };
+              return w;
+            }
+            return [...v, { date: d, hours: f }];
+          });
+          setHoursInput("");
+        }
+        function startEditHours(d, h) {
+          (setEditDate(d), setEditValue(String(h)));
+        }
+        function cancelEditHours() {
+          (setEditDate(null), setEditValue(""));
+        }
+        function saveEditHours() {
+          if (editDate == null) return;
+          const f = parseFloat(editValue);
+          setHours((v) =>
+            !isFinite(f) || f <= 0
+              ? v.filter((b) => b.date !== editDate)
+              : v.map((b) => (b.date === editDate ? { ...b, hours: f } : b)),
+          );
+          (setEditDate(null), setEditValue(""));
+        }
+        function deleteHours(d) {
+          setHours((v) => v.filter((b) => b.date !== d));
+          editDate === d && (setEditDate(null), setEditValue(""));
+        }
+        const hoursData = R.useMemo(() => {
+          const f = new Map(hours.map((v) => [v.date, v.hours])),
+            d = [],
+            S = new Date();
+          for (let w = 13; w >= 0; w--) {
+            const b = new Date(S);
+            b.setDate(S.getDate() - w);
+            const x = DT(b);
+            d.push({
+              date: x,
+              label: `${String(b.getDate()).padStart(2, "0")}/${String(b.getMonth() + 1).padStart(2, "0")}`,
+              hours: f.get(x) ?? 0,
+            });
+          }
+          return d;
+        }, [hours]);
+        const loggedDays = R.useMemo(
+          () => hours.slice().sort((f, d) => (f.date < d.date ? 1 : -1)),
+          [hours],
+        );
+        const avgHours = R.useMemo(() => {
+          const f = hoursData.filter((d) => d.hours > 0);
+          return f.length
+            ? Math.round((f.reduce((d, v) => d + v.hours, 0) / f.length) * 10) /
+                10
+            : 0;
+        }, [hoursData]);
+        const cumulativeData = R.useMemo(() => {
+          let f = 0;
+          return hoursData.map((d) => (
+            (f += d.hours), { label: d.label, total: Math.round(f * 10) / 10 }
+          ));
+        }, [hoursData]);
+        const studyStreak = R.useMemo(() => {
+          const f = new Set(hours.filter((d) => d.hours > 0).map((d) => d.date));
+          let d = 0,
+            v = new Date();
+          v.setHours(0, 0, 0, 0);
+          if (!f.has(DT(v))) v.setDate(v.getDate() - 1);
+          while (f.has(DT(v))) (d++, v.setDate(v.getDate() - 1));
+          return d;
+        }, [hours]);
+        const bestStreak = R.useMemo(() => {
+          const f = [
+            ...new Set(hours.filter((d) => d.hours > 0).map((d) => d.date)),
+          ].sort();
+          let d = 0,
+            v = 0,
+            S = null;
+          for (const w of f) {
+            v =
+              S &&
+              (new Date(w + "T00:00:00") - new Date(S + "T00:00:00")) / 864e5 ===
+                1
+                ? v + 1
+                : 1;
+            v > d && (d = v);
+            S = w;
+          }
+          return d;
+        }, [hours]);
+        const weekHours = R.useMemo(() => {
+          const f = new Date();
+          f.setHours(0, 0, 0, 0);
+          f.setDate(f.getDate() - ((f.getDay() + 6) % 7));
+          const d = DT(f);
+          return (
+            Math.round(
+              hours
+                .filter((v) => v.date >= d)
+                .reduce((v, b) => v + b.hours, 0) * 10,
+            ) / 10
+          );
+        }, [hours]);
+        const totalHours = R.useMemo(
+          () =>
+            Math.round(hours.reduce((f, d) => f + (d.hours || 0), 0) * 10) / 10,
+          [hours],
+        );
+        const todayHours =
+          Math.round(((hours.find((f) => f.date === Un())?.hours) ?? 0) * 10) /
+          10;
+        const streakMsg =
+          studyStreak === 0
+            ? "Log some study time today to start a streak."
+            : studyStreak === 1
+              ? "Day one — nice start! Come back tomorrow to keep it going."
+              : studyStreak < 4
+                ? `${studyStreak} days in a row — you're building a habit!`
+                : studyStreak < 7
+                  ? `${studyStreak}-day streak — you're on a roll!`
+                  : `${studyStreak} days straight — incredible focus!`;
+        const streakGold = studyStreak >= 30;
+        const streakColor =
+          studyStreak === 0
+            ? "var(--muted-foreground)"
+            : studyStreak < 3
+              ? "#fb923c"
+              : studyStreak < 7
+                ? "#f97316"
+                : studyStreak < 30
+                  ? "#ef4444"
+                  : "#d4af37";
+        const weeklyGoal = Math.max(parseFloat(goalStr) || 0, 0);
+        const goalPct =
+          weeklyGoal > 0
+            ? Math.min(100, Math.round((weekHours / weeklyGoal) * 100))
+            : 0;
+        const goalMsg =
+          weeklyGoal <= 0
+            ? "Set a weekly target to track your progress."
+            : weekHours >= weeklyGoal
+              ? `Goal smashed — ${weekHours}h logged this week! 🎉`
+              : `${Math.round((weeklyGoal - weekHours) * 10) / 10}h to go to hit your goal this week.`;
+        const goalDone = weeklyGoal > 0 && weekHours >= weeklyGoal;
+        const goalColor = goalDone ? "#10b981" : "#3b82f6";
         return C.jsxs(C.Fragment, {
           children: [
             C.jsx("h1", {
-              className: "text-3xl font-bold border-t border-border pt-6 mb-8",
+              className: "text-4xl font-bold border-t border-border pt-6 mb-8",
               style: ks,
-              children: "Insights",
+              children: "Observations",
             }),
             C.jsxs("div", {
               className:
-                "grid grid-cols-2 md:grid-cols-4 border-t border-l border-border mb-12",
+                "grid grid-cols-2 md:grid-cols-5 border-t border-l border-border mb-12",
               children: [
                 C.jsx(Ss, { label: "Entries", value: t }),
                 C.jsx(Ss, { label: "Topics", value: u.length }),
                 C.jsx(Ss, { label: "This Week", value: o.week }),
                 C.jsx(Ss, { label: "This Month", value: o.month }),
+                C.jsx(Ss, {
+                  label: "Total Hours",
+                  value: `${totalHours}h`,
+                  accent: !0,
+                }),
               ],
             }),
             C.jsxs("div", {
-              className: "border-t border-border pt-6",
+              className: "border border-border p-6 mb-8",
+              style: { borderRadius: "var(--radius)" },
               children: [
                 C.jsx("h2", {
-                  className: "text-xs tracking-[0.25em] uppercase mb-6",
-                  style: Ts,
+                  className: "text-3xl font-bold mb-6",
+                  style: ks,
                   children: "Entries by Topic",
                 }),
                 u.length === 0
@@ -40913,6 +41196,682 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                     }),
               ],
             }),
+            C.jsxs("div", {
+              className: "border border-border p-6 mb-8",
+              style: { borderRadius: "var(--radius)" },
+              children: [
+                C.jsx("h2", {
+                  className: "text-3xl font-bold mb-2",
+                  style: ks,
+                  children: "Study Hours",
+                }),
+                C.jsxs("p", {
+                  className: "text-sm text-muted-foreground mb-6",
+                  style: ks,
+                  children: [
+                    "Log how long you studied today — Total: ",
+                    totalHours,
+                    "h · Today: ",
+                    todayHours,
+                    "h · Avg: ",
+                    avgHours,
+                    "h/day",
+                  ],
+                }),
+                C.jsxs("div", {
+                  className: "border p-6 mb-8 max-w-lg flex items-center gap-5",
+                  style: {
+                    borderRadius: "var(--radius)",
+                    borderColor:
+                      studyStreak >= 3 ? streakColor : "var(--border)",
+                    boxShadow:
+                      studyStreak >= 3 ? `0 0 18px -6px ${streakColor}` : "none",
+                  },
+                  children: [
+                    C.jsxs("div", {
+                      className: "text-center shrink-0",
+                      children: [
+                        C.jsxs("p", {
+                          className: "text-4xl font-bold",
+                          style: {
+                            fontFamily: "'Playfair Display', serif",
+                            color: streakColor,
+                          },
+                          children: [studyStreak, " ", streakGold ? "🏆" : "🔥"],
+                        }),
+                        C.jsx("p", {
+                          className:
+                            "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mt-1",
+                          style: Ts,
+                          children: "Day streak",
+                        }),
+                      ],
+                    }),
+                    C.jsxs("div", {
+                      className: "flex-1 min-w-0",
+                      children: [
+                        C.jsx("p", {
+                          className: "text-sm",
+                          style: ks,
+                          children: streakMsg,
+                        }),
+                        bestStreak > 1 &&
+                          C.jsxs("p", {
+                            className:
+                              "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mt-2",
+                            style: Ts,
+                            children: ["Best: ", bestStreak, " days"],
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                C.jsxs("div", {
+                  className: "border border-border p-6 mb-8 max-w-lg",
+                  children: [
+                    C.jsxs("div", {
+                      className: "flex items-center justify-between mb-3",
+                      children: [
+                        C.jsx("p", {
+                          className:
+                            "text-[10px] tracking-[0.2em] uppercase text-muted-foreground",
+                          style: Ts,
+                          children: "Weekly Goal",
+                        }),
+                        C.jsxs("div", {
+                          className: "flex items-center gap-2",
+                          children: [
+                            C.jsx("input", {
+                              type: "number",
+                              min: "1",
+                              step: "1",
+                              value: goalStr,
+                              onChange: (f) => setGoalStr(f.target.value),
+                              className:
+                                "bg-input-background border border-border px-2 py-1 text-sm focus:outline-none",
+                              style: {
+                                fontFamily: "'DM Mono', monospace",
+                                width: "4rem",
+                                textAlign: "right",
+                              },
+                            }),
+                            C.jsx("span", {
+                              className: "text-xs text-muted-foreground",
+                              style: Ts,
+                              children: "h / week",
+                            }),
+                          ],
+                        }),
+                      ],
+                    }),
+                    C.jsxs("p", {
+                      className: "text-xl font-bold mb-2",
+                      style: ks,
+                      children: [
+                        weekHours,
+                        "h ",
+                        C.jsxs("span", {
+                          className: "text-sm text-muted-foreground font-normal",
+                          children: ["of ", weeklyGoal, "h"],
+                        }),
+                        goalDone &&
+                          C.jsx("span", {
+                            style: { color: "#10b981", fontWeight: 700 },
+                            children: " ✓",
+                          }),
+                      ],
+                    }),
+                    C.jsx("div", {
+                      className: "h-2 bg-muted overflow-hidden",
+                      children: C.jsx("div", {
+                        className: "h-full",
+                        style: {
+                          width: `${goalPct}%`,
+                          backgroundColor: goalColor,
+                          transition:
+                            "width 0.35s ease, background-color 0.35s ease",
+                        },
+                      }),
+                    }),
+                    C.jsx("p", {
+                      className: "text-xs mt-2",
+                      style: {
+                        fontFamily: "'DM Mono', monospace",
+                        color: goalDone ? "#10b981" : "var(--muted-foreground)",
+                      },
+                      children: goalMsg,
+                    }),
+                  ],
+                }),
+                C.jsxs("div", {
+                  className:
+                    "border border-border p-6 mb-8 max-w-lg text-center",
+                  children: [
+                    C.jsx("p", {
+                      className:
+                        "text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2",
+                      style: Ts,
+                      children:
+                        timerMode === "focus" ? "Focus Session" : "Break Time",
+                    }),
+                    C.jsx("p", {
+                      className: "text-4xl font-bold tabular-nums mb-4",
+                      style: ks,
+                      children: fmtTime(secondsLeft),
+                    }),
+                    C.jsxs("div", {
+                      className: "flex items-center justify-center gap-2",
+                      children: [
+                        C.jsx("button", {
+                          type: "button",
+                          onClick: toggleTimer,
+                          className:
+                            "bg-primary text-primary-foreground px-6 py-2 text-xs tracking-[0.15em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200",
+                          style: Ts,
+                          children: running ? "Pause" : "Start",
+                        }),
+                        C.jsx("button", {
+                          type: "button",
+                          onClick: resetTimer,
+                          className:
+                            "border border-border px-6 py-2 text-xs tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground hover:border-foreground transition-colors duration-200",
+                          style: Ts,
+                          children: "Reset",
+                        }),
+                      ],
+                    }),
+                    C.jsx("p", {
+                      className: "text-[10px] text-muted-foreground mt-2",
+                      style: Ts,
+                      children:
+                        "Each finished 25-min focus session logs to today's hours automatically.",
+                    }),
+                  ],
+                }),
+                C.jsxs("div", {
+                  className: `flex items-stretch border max-w-lg ${hoursError ? "sh-error mb-2" : "border-border mb-8"} ${shake ? "sh-shake" : ""}`,
+                  onAnimationEnd: () => setShake(!1),
+                  children: [
+                    C.jsx("input", {
+                      type: "number",
+                      min: "0",
+                      step: "0.5",
+                      inputMode: "decimal",
+                      value: hoursInput,
+                      onChange: (f) => {
+                        (setHoursInput(f.target.value), setHoursError(!1));
+                      },
+                      onKeyDown: (f) => f.key === "Enter" && logHours(),
+                      placeholder: "Hours studied today…",
+                      className:
+                        "flex-1 bg-input-background px-4 py-3 text-sm focus:outline-none placeholder:text-muted-foreground/50",
+                    }),
+                    C.jsx("button", {
+                      onClick: logHours,
+                      disabled: !hoursInput.trim(),
+                      className:
+                        "flex items-center gap-2 bg-primary text-primary-foreground px-5 text-xs tracking-[0.15em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed",
+                      style: Ts,
+                      children: "Log",
+                    }),
+                  ],
+                }),
+                hoursError &&
+                  C.jsx("p", {
+                    className: "text-sm mb-8",
+                    style: {
+                      color: "#ef4444",
+                      fontFamily: "'DM Mono', monospace",
+                    },
+                    children:
+                      "That can't be right — please enter 16 hours or fewer.",
+                  }),
+                C.jsxs("div", {
+                  className: "border border-border p-4 mb-8",
+                  style: { borderRadius: "var(--radius)" },
+                  children: [
+                    C.jsx("p", {
+                      className:
+                        "text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-3",
+                      style: Ts,
+                      children: "Daily Hours",
+                    }),
+                    C.jsx(XO, {
+                      width: "100%",
+                      height: 240,
+                      children: C.jsxs(kK, {
+                        data: hoursData,
+                        margin: { left: -16, right: 16, top: 8 },
+                        children: [
+                          C.jsx(yf, {
+                            type: "category",
+                            dataKey: "label",
+                            interval: 1,
+                            tick: {
+                              fontSize: 9,
+                              fontFamily: "'DM Mono', monospace",
+                              fill: "var(--muted-foreground)",
+                            },
+                            axisLine: !1,
+                            tickLine: !1,
+                          }),
+                          C.jsx(gf, {
+                            type: "number",
+                            allowDecimals: !1,
+                            width: 28,
+                            tick: {
+                              fontSize: 10,
+                              fontFamily: "'DM Mono', monospace",
+                              fill: "var(--muted-foreground)",
+                            },
+                            axisLine: !1,
+                            tickLine: !1,
+                          }),
+                          C.jsx(kr, {
+                            contentStyle: c,
+                            cursor: { fill: "var(--muted)" },
+                          }),
+                          C.jsx(Mi, {
+                            dataKey: "hours",
+                            fill: "#3b82f6",
+                            barSize: 16,
+                            radius: 0,
+                          }),
+                          avgHours > 0 &&
+                            C.jsx(ob, {
+                              y: avgHours,
+                              stroke: "#10b981",
+                              strokeDasharray: "5 4",
+                              strokeWidth: 1.5,
+                              ifOverflow: "extendDomain",
+                              label: {
+                                value: "avg",
+                                position: "insideTopRight",
+                                fill: "#10b981",
+                                fontSize: 10,
+                                fontFamily: "'DM Mono', monospace",
+                              },
+                            }),
+                        ],
+                      }),
+                    }),
+                  ],
+                }),
+                C.jsxs("div", {
+                  className: "border border-border p-4 mb-8",
+                  style: { borderRadius: "var(--radius)" },
+                  children: [
+                    C.jsx("p", {
+                      className:
+                        "text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-3",
+                      style: Ts,
+                      children: "Cumulative Hours",
+                    }),
+                    C.jsx(XO, {
+                      width: "100%",
+                      height: 160,
+                      children: C.jsxs(kK, {
+                        data: cumulativeData,
+                        margin: { left: -16, right: 16, top: 8 },
+                        children: [
+                          C.jsx(yf, {
+                            type: "category",
+                            dataKey: "label",
+                            interval: 1,
+                            tick: {
+                              fontSize: 9,
+                              fontFamily: "'DM Mono', monospace",
+                              fill: "var(--muted-foreground)",
+                            },
+                            axisLine: !1,
+                            tickLine: !1,
+                          }),
+                          C.jsx(gf, {
+                            type: "number",
+                            allowDecimals: !1,
+                            width: 28,
+                            tick: {
+                              fontSize: 10,
+                              fontFamily: "'DM Mono', monospace",
+                              fill: "var(--muted-foreground)",
+                            },
+                            axisLine: !1,
+                            tickLine: !1,
+                          }),
+                          C.jsx(kr, {
+                            contentStyle: c,
+                            cursor: { fill: "var(--muted)" },
+                          }),
+                          C.jsx(Mi, {
+                            dataKey: "total",
+                            fill: "#10b981",
+                            barSize: 16,
+                            radius: 0,
+                          }),
+                        ],
+                      }),
+                    }),
+                  ],
+                }),
+                loggedDays.length > 0 &&
+                  C.jsxs("div", {
+                    className: "mt-6 max-w-lg",
+                    children: [
+                      C.jsx("p", {
+                        className:
+                          "text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-3",
+                        style: Ts,
+                        children: "Logged Days",
+                      }),
+                      C.jsx("div", {
+                        className: "border border-border",
+                        children: loggedDays.map((f, b) =>
+                          C.jsx(
+                            "div",
+                            {
+                              className: `group flex items-center gap-3 px-4 py-3 ${b < loggedDays.length - 1 ? "border-b border-border" : ""}`,
+                              children:
+                                editDate === f.date
+                                  ? C.jsxs("div", {
+                                      className:
+                                        "flex items-center gap-2 w-full",
+                                      children: [
+                                        C.jsx("input", {
+                                          type: "number",
+                                          min: "0",
+                                          step: "0.5",
+                                          autoFocus: !0,
+                                          value: editValue,
+                                          onChange: (x) =>
+                                            setEditValue(x.target.value),
+                                          onKeyDown: (x) => {
+                                            x.key === "Enter" && saveEditHours();
+                                            x.key === "Escape" &&
+                                              cancelEditHours();
+                                          },
+                                          className:
+                                            "flex-1 bg-input-background border border-border px-2 py-1 text-sm focus:outline-none focus:border-accent",
+                                        }),
+                                        C.jsx("button", {
+                                          onClick: saveEditHours,
+                                          className:
+                                            "text-[10px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors p-1",
+                                          style: Ts,
+                                          children: "Save",
+                                        }),
+                                        C.jsx("button", {
+                                          onClick: cancelEditHours,
+                                          className:
+                                            "text-[10px] tracking-[0.15em] uppercase text-muted-foreground hover:text-accent transition-colors p-1",
+                                          style: Ts,
+                                          children: "Cancel",
+                                        }),
+                                      ],
+                                    })
+                                  : C.jsxs(C.Fragment, {
+                                      children: [
+                                        C.jsx("span", {
+                                          className: "flex-1 text-sm",
+                                          style: ks,
+                                          children: new Date(
+                                            f.date + "T00:00:00",
+                                          ).toLocaleDateString("en-GB", {
+                                            weekday: "short",
+                                            day: "2-digit",
+                                            month: "short",
+                                          }),
+                                        }),
+                                        C.jsxs("span", {
+                                          className:
+                                            "text-sm font-bold tabular-nums",
+                                          style: ks,
+                                          children: [
+                                            Math.round(f.hours * 10) / 10,
+                                            "h",
+                                          ],
+                                        }),
+                                        C.jsxs("div", {
+                                          className:
+                                            "flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity",
+                                          children: [
+                                            C.jsx("button", {
+                                              onClick: () =>
+                                                startEditHours(f.date, f.hours),
+                                              className:
+                                                "text-muted-foreground hover:text-foreground transition-colors p-1",
+                                              "aria-label": "Edit",
+                                              children: C.jsx(i0, { size: 13 }),
+                                            }),
+                                            C.jsx("button", {
+                                              onClick: () => deleteHours(f.date),
+                                              className:
+                                                "text-muted-foreground hover:text-accent transition-colors p-1",
+                                              "aria-label": "Delete",
+                                              children: C.jsx(a0, { size: 13 }),
+                                            }),
+                                          ],
+                                        }),
+                                      ],
+                                    }),
+                            },
+                            f.date,
+                          ),
+                        ),
+                      }),
+                    ],
+                  }),
+              ],
+            }),
+          ],
+        });
+      }
+      const YEAR_KEY = "study-tracker:year-group";
+      function useYearGroup() {
+        const [yg, setYg] = R.useState(
+          () => localStorage.getItem(YEAR_KEY) || "",
+        );
+        R.useEffect(() => {
+          const f = () => setYg(localStorage.getItem(YEAR_KEY) || "");
+          return (
+            window.addEventListener("yeargroupchange", f),
+            window.addEventListener("storage", f),
+            () => {
+              window.removeEventListener("yeargroupchange", f);
+              window.removeEventListener("storage", f);
+            }
+          );
+        }, []);
+        const set = (f) => {
+          try {
+            localStorage.setItem(YEAR_KEY, f);
+          } catch {}
+          window.dispatchEvent(new Event("yeargroupchange"));
+        };
+        return [yg, set];
+      }
+      function ExamCountdown() {
+        const EX_KEY = "study-tracker:exams";
+        const [yg] = useYearGroup();
+        const examPlaceholder =
+          yg === "12" || yg === "13"
+            ? "Subject — e.g. A-Level Biology Unit 3"
+            : yg === "9" || yg === "10" || yg === "11"
+              ? "Subject — e.g. GCSE Maths Paper 1"
+              : "Subject — e.g. Maths Paper 1";
+        const [exams, setExams] = R.useState(() => {
+          try {
+            const f = localStorage.getItem(EX_KEY);
+            if (!f) return [];
+            const d = JSON.parse(f);
+            return Array.isArray(d)
+              ? d
+                  .filter(
+                    (v) =>
+                      v &&
+                      typeof v.subject === "string" &&
+                      typeof v.date === "string",
+                  )
+                  .map((v) => ({
+                    id: String(v.id ?? Date.now().toString()),
+                    subject: v.subject,
+                    date: v.date,
+                  }))
+              : [];
+          } catch {
+            return [];
+          }
+        });
+        R.useEffect(() => {
+          try {
+            localStorage.setItem(EX_KEY, JSON.stringify(exams));
+          } catch {}
+        }, [exams]);
+        const [subject, setSubject] = R.useState("");
+        const [date, setDate] = R.useState("");
+        function addExam() {
+          const f = subject.trim();
+          if (!f || !date) return;
+          (setExams((d) => [
+            ...d,
+            { id: Date.now().toString(), subject: f, date },
+          ]),
+            setSubject(""),
+            setDate(""));
+        }
+        function deleteExam(f) {
+          setExams((d) => d.filter((v) => v.id !== f));
+        }
+        const daysUntil = (f) => {
+          const d = new Date();
+          return (
+            d.setHours(0, 0, 0, 0),
+            Math.round((new Date(f + "T00:00:00") - d) / 864e5)
+          );
+        };
+        const upcoming = R.useMemo(
+          () =>
+            exams
+              .filter((f) => daysUntil(f.date) >= 0)
+              .sort((f, d) => (f.date < d.date ? -1 : 1)),
+          [exams],
+        );
+        const cdLabel = (f) =>
+          f === 0 ? "Today" : f === 1 ? "Tomorrow" : `${f} days`;
+        const fmtDate = (f) =>
+          new Date(f + "T00:00:00").toLocaleDateString("en-GB", {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        return C.jsxs("div", {
+          className: "border border-border p-6 mb-8",
+          style: { borderRadius: "var(--radius)" },
+          children: [
+            C.jsx("h2", {
+              className: "text-3xl font-bold mb-2",
+              style: ks,
+              children: "Exam Countdown",
+            }),
+            C.jsx("p", {
+              className: "text-sm text-muted-foreground mb-6",
+              style: ks,
+              children:
+                "Add your exam dates and keep an eye on what's coming up next.",
+            }),
+            C.jsxs("div", {
+              className: "flex flex-wrap items-stretch gap-2 mb-8",
+              children: [
+                C.jsx("input", {
+                  type: "text",
+                  value: subject,
+                  onChange: (f) => setSubject(f.target.value),
+                  onKeyDown: (f) => f.key === "Enter" && addExam(),
+                  placeholder: examPlaceholder,
+                  className:
+                    "flex-1 min-w-0 bg-input-background border border-border px-4 py-3 text-sm focus:outline-none placeholder:text-muted-foreground/50",
+                }),
+                C.jsx("input", {
+                  type: "date",
+                  value: date,
+                  onChange: (f) => setDate(f.target.value),
+                  className:
+                    "bg-input-background border border-border px-4 py-3 text-sm focus:outline-none",
+                }),
+                C.jsxs("button", {
+                  type: "button",
+                  onClick: addExam,
+                  disabled: !subject.trim() || !date,
+                  className:
+                    "flex items-center gap-2 bg-primary text-primary-foreground px-5 text-xs tracking-[0.15em] uppercase hover:bg-accent hover:text-accent-foreground transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed",
+                  style: la,
+                  children: [C.jsx(Ms, { size: 14 }), " Add"],
+                }),
+              ],
+            }),
+            upcoming.length === 0
+              ? C.jsx("p", {
+                  className: "text-sm text-muted-foreground",
+                  style: _y,
+                  children: "No upcoming exams — add one above.",
+                })
+              : C.jsx("div", {
+                  className: "grid grid-cols-1 md:grid-cols-2 gap-3",
+                  children: upcoming.map((f) => {
+                    const d = daysUntil(f.date);
+                    return C.jsxs(
+                      "div",
+                      {
+                        className: "group relative border p-4",
+                        style: {
+                          borderRadius: "var(--radius)",
+                          borderColor:
+                            d < 7
+                              ? "#ef4444"
+                              : d <= 30
+                                ? "#d97706"
+                                : "var(--border)",
+                        },
+                        children: [
+                          C.jsx("p", {
+                            className:
+                              "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-2",
+                            style: la,
+                            children: fmtDate(f.date),
+                          }),
+                          C.jsx("p", {
+                            className:
+                              "text-base font-bold leading-snug mb-3 pr-8",
+                            style: _y,
+                            children: f.subject,
+                          }),
+                          C.jsx("p", {
+                            className: "text-xl font-bold",
+                            style: {
+                              fontFamily: "'Playfair Display', serif",
+                              color:
+                                d < 7
+                                  ? "#ef4444"
+                                  : d <= 30
+                                    ? "#d97706"
+                                    : "var(--foreground)",
+                            },
+                            children: cdLabel(d),
+                          }),
+                          C.jsx("button", {
+                            type: "button",
+                            onClick: () => deleteExam(f.id),
+                            className:
+                              "absolute top-4 right-4 text-muted-foreground hover:text-accent transition-colors p-1 md:opacity-0 md:group-hover:opacity-100",
+                            "aria-label": "Delete",
+                            children: C.jsx(a0, { size: 13 }),
+                          }),
+                        ],
+                      },
+                      f.id,
+                    );
+                  }),
+                }),
           ],
         });
       }
@@ -40936,6 +41895,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           S = g.filter((j) => !j.done).length,
           w = g.length - S,
           b = u === Un();
+        const [flashId, setFlashId] = R.useState(null);
         function _() {
           const j = l.trim();
           if (!j) return;
@@ -40943,6 +41903,11 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           (t(($) => [M, ...$]), c(""));
         }
         function A(j) {
+          const $ = e.find((M) => M.id === j);
+          if ($ && !$.done) {
+            setFlashId(j);
+            setTimeout(() => setFlashId((M) => (M === j ? null : M)), 900);
+          }
           t((M) => M.map(($) => ($.id === j ? { ...$, done: !$.done } : $)));
         }
         function P(j) {
@@ -41113,7 +42078,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                         C.jsxs(
                           "div",
                           {
-                            className: `flex items-center gap-4 py-4 border-b border-border group ${j.done ? "opacity-60" : ""}`,
+                            className: `flex items-center gap-4 py-4 px-2 border-b border-border group ${j.done ? "opacity-60" : ""} ${flashId === j.id ? "task-flash" : ""}`,
                             children: [
                               C.jsx("button", {
                                 onClick: () => A(j.id),
@@ -41744,10 +42709,30 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                 children: C.jsxs(qn, {
                   element: C.jsx(v$, { ctx: y }),
                   children: [
-                    C.jsx(qn, { index: !0, element: C.jsx(hw, {}) }),
+                    C.jsx(qn, {
+                      index: !0,
+                      element: C.jsxs(C.Fragment, {
+                        children: [
+                          C.jsx(hw, {}),
+                          C.jsx(ExamCountdown, {}),
+                          C.jsx(TasksPage, {}),
+                          C.jsx(CK, {}),
+                        ],
+                      }),
+                    }),
                     C.jsx(qn, { path: "tasks", element: C.jsx(TasksPage, {}) }),
                     C.jsx(qn, { path: "insights", element: C.jsx(CK, {}) }),
-                    C.jsx(qn, { path: "*", element: C.jsx(hw, {}) }),
+                    C.jsx(qn, {
+                      path: "*",
+                      element: C.jsxs(C.Fragment, {
+                        children: [
+                          C.jsx(hw, {}),
+                          C.jsx(ExamCountdown, {}),
+                          C.jsx(TasksPage, {}),
+                          C.jsx(CK, {}),
+                        ],
+                      }),
+                    }),
                   ],
                 }),
               }),
@@ -46522,6 +47507,160 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         50% {
           opacity: 0;
         }
+      }
+    </style>
+
+    <!-- Crystal UI overrides: larger controls + glowing rounded glass boxes.
+         Unlayered so these rules win over Tailwind's @layer utilities. -->
+    <style id="crystal-ui">
+      /* One token rounds the whole shadcn system (cards, inputs, buttons,
+         popovers all derive from --radius). */
+      :root,
+      .dark {
+        --radius: 0.9rem !important;
+        --crystal-glow: color-mix(in oklab, var(--ring) 55%, transparent);
+        --crystal-edge: color-mix(in oklab, var(--primary) 12%, transparent);
+      }
+
+      /* ---- Boxes: cards, panels, popovers, menus, dialogs ---- */
+      .bg-card:not([class*="rounded-full"]),
+      .bg-popover:not([class*="rounded-full"]),
+      .bg-sidebar:not([class*="rounded-full"]),
+      [data-slot="card"]:not([class*="rounded-full"]),
+      [role="dialog"],
+      [role="menu"],
+      [role="listbox"] {
+        border-radius: var(--radius);
+        -webkit-backdrop-filter: blur(14px) saturate(1.25);
+        backdrop-filter: blur(14px) saturate(1.25);
+        box-shadow:
+          inset 0 1px 0 color-mix(in oklab, #fff 18%, transparent),
+          0 0 0 1px var(--crystal-edge),
+          0 10px 34px -12px color-mix(in oklab, var(--primary) 30%, transparent),
+          0 0 26px -10px var(--crystal-glow);
+      }
+      .bg-card,
+      [data-slot="card"] {
+        background-color: color-mix(in oklab, var(--card) 82%, transparent) !important;
+      }
+      .bg-popover {
+        background-color: color-mix(in oklab, var(--popover) 85%, transparent) !important;
+      }
+
+      /* ---- Input boxes: larger + frosted glass + glowing focus ---- */
+      input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+      textarea,
+      select,
+      .bg-input-background {
+        border-radius: var(--radius) !important;
+        background-color: color-mix(in oklab, var(--input-background) 72%, transparent) !important;
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        font-size: 1rem !important;
+        min-height: 2.85rem !important;
+        padding: 0.6rem 0.95rem !important;
+        border: 1px solid var(--crystal-edge) !important;
+        box-shadow: inset 0 1px 0 color-mix(in oklab, #fff 10%, transparent);
+        transition: box-shadow 0.22s ease, border-color 0.22s ease,
+          background-color 0.22s ease;
+      }
+      textarea {
+        min-height: 5rem !important;
+      }
+      input:focus,
+      input:focus-visible,
+      textarea:focus,
+      textarea:focus-visible,
+      select:focus,
+      .bg-input-background:focus {
+        outline: none !important;
+        border-color: color-mix(in oklab, var(--ring) 85%, transparent) !important;
+        box-shadow:
+          0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent),
+          0 0 20px -2px var(--crystal-glow) !important;
+      }
+
+      /* ---- Buttons: larger + glowing crystal edge ---- */
+      button:not([class*="rounded-full"]),
+      [role="button"]:not([class*="rounded-full"]),
+      a[data-slot="button"]:not([class*="rounded-full"]) {
+        border-radius: var(--radius) !important;
+      }
+      button,
+      [role="button"],
+      a[data-slot="button"] {
+        transition: box-shadow 0.22s ease, transform 0.12s ease,
+          filter 0.2s ease, background-color 0.2s ease;
+      }
+      /* Enlarge text buttons; skip icon-only (size or aria-label) and toggles. */
+      button:not([class*="size-"]):not([aria-label]):not([role="tab"]):not([role="switch"]):not([role="checkbox"]):not([role="radio"]) {
+        min-height: 2.7rem !important;
+        padding-inline: 1.15rem !important;
+        font-size: 0.97rem !important;
+      }
+      button:hover,
+      [role="button"]:hover {
+        box-shadow: 0 0 0 1px var(--crystal-edge),
+          0 0 18px -3px var(--crystal-glow);
+      }
+      button:active,
+      [role="button"]:active {
+        transform: translateY(1px);
+      }
+      .bg-primary {
+        box-shadow: 0 6px 22px -6px
+          color-mix(in oklab, var(--primary) 50%, transparent);
+      }
+      .bg-primary:hover {
+        box-shadow: 0 8px 30px -6px
+          color-mix(in oklab, var(--primary) 65%, transparent);
+        filter: brightness(1.04);
+      }
+
+      /* ---- Hours input validation: shake + red error ---- */
+      @keyframes sh-shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20% {
+          transform: translateX(-7px);
+        }
+        40% {
+          transform: translateX(7px);
+        }
+        60% {
+          transform: translateX(-5px);
+        }
+        80% {
+          transform: translateX(4px);
+        }
+      }
+      .sh-shake {
+        animation: sh-shake 0.4s ease;
+      }
+      .sh-error {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 1px #ef4444,
+          0 0 20px -4px rgba(239, 68, 68, 0.55) !important;
+      }
+      .sh-error input {
+        color: #ef4444 !important;
+      }
+
+      /* ---- Task completion: brief green flash, then back to normal ---- */
+      @keyframes task-flash {
+        0% {
+          background-color: rgba(16, 185, 129, 0.3);
+          box-shadow: inset 3px 0 0 #10b981;
+        }
+        100% {
+          background-color: transparent;
+          box-shadow: inset 3px 0 0 transparent;
+        }
+      }
+      .task-flash {
+        animation: task-flash 0.9s ease-out;
       }
     </style>
   </head>
