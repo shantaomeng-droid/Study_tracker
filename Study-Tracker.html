@@ -11956,7 +11956,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                           value: yg,
                           onChange: (l) => setYg(l.target.value),
                           className:
-                            "bg-input-background border border-border text-xs tracking-[0.12em] uppercase text-muted-foreground focus:outline-none focus:border-foreground cursor-pointer",
+                            "year-select bg-input-background border border-border text-xs tracking-[0.12em] uppercase text-muted-foreground focus:outline-none focus:border-foreground cursor-pointer",
                           style: ia,
                           "aria-label": "Year group",
                           children: [
@@ -47578,6 +47578,18 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         box-shadow:
           0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent),
           0 0 20px -2px var(--crystal-glow) !important;
+      }
+
+      /* ---- Year-level select: clear dropdown chevron ---- */
+      select.year-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        padding-right: 2.1rem !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.7rem center;
+        background-size: 1rem;
       }
 
       /* ---- Buttons: larger + glowing crystal edge ---- */
