@@ -11876,15 +11876,7 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
         o0 = rr("x", d$),
         RT = "maths-tracker:theme";
       function p$() {
-        var e;
-        try {
-          const t = localStorage.getItem(RT);
-          if (t === "light" || t === "dark") return t;
-        } catch {}
-        return (e = window.matchMedia) != null &&
-          e.call(window, "(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
+        return "dark";
       }
       function h$() {
         const [e, t] = R.useState(p$);
@@ -11979,16 +11971,6 @@ Please change the parent <Route path="${P}"> to <Route path="${P === "/" ? "*" :
                               children: "Year 13",
                             }),
                           ],
-                        }),
-                        C.jsx("button", {
-                          onClick: r,
-                          className:
-                            "p-2 text-muted-foreground hover:text-foreground transition-colors",
-                          "aria-label": "Toggle theme",
-                          children:
-                            t === "dark"
-                              ? C.jsx(c$, { size: 15 })
-                              : C.jsx(i$, { size: 15 }),
                         }),
                         C.jsx("button", {
                           onClick: () => a((l) => !l),
@@ -40832,7 +40814,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           children: [
             C.jsx("p", {
               className:
-                "text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2",
+                "text-xs tracking-[0.2em] uppercase text-muted-foreground mb-2",
               style: Ts,
               children: e,
             }),
@@ -47093,81 +47075,81 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       }
       :root {
         --font-size: 16px;
-        --background: #f7f5f0;
-        --foreground: #18180f;
-        --card: #eeeae1;
-        --card-foreground: #18180f;
-        --popover: #f7f5f0;
-        --popover-foreground: #18180f;
-        --primary: #18180f;
-        --primary-foreground: #f7f5f0;
-        --secondary: #e4e0d6;
-        --secondary-foreground: #18180f;
-        --muted: #e4e0d6;
-        --muted-foreground: #6b6856;
-        --accent: #c03828;
-        --accent-foreground: #f7f5f0;
-        --destructive: #c03828;
-        --destructive-foreground: #f7f5f0;
-        --border: #18180f1f;
+        --background: #ffffff;
+        --foreground: #0f172a;
+        --card: #f8fafc;
+        --card-foreground: #0f172a;
+        --popover: #ffffff;
+        --popover-foreground: #0f172a;
+        --primary: #3b82f6;
+        --primary-foreground: #ffffff;
+        --secondary: #f1f5f9;
+        --secondary-foreground: #0f172a;
+        --muted: #f1f5f9;
+        --muted-foreground: #64748b;
+        --accent: #2563eb;
+        --accent-foreground: #ffffff;
+        --destructive: #ef4444;
+        --destructive-foreground: #ffffff;
+        --border: #e2e8f0;
         --input: transparent;
-        --input-background: #e4e0d6;
-        --switch-background: #b8b4a8;
+        --input-background: #f1f5f9;
+        --switch-background: #cbd5e1;
         --font-weight-medium: 500;
         --font-weight-normal: 400;
-        --ring: #18180f4d;
-        --chart-1: #c03828;
-        --chart-2: #4a7c6e;
-        --chart-3: #18180f;
-        --chart-4: #8b7355;
-        --chart-5: #e4e0d6;
+        --ring: #3b82f64d;
+        --chart-1: #3b82f6;
+        --chart-2: #16a34a;
+        --chart-3: #d97706;
+        --chart-4: #9333ea;
+        --chart-5: #64748b;
         --radius: 0rem;
-        --sidebar: #eeeae1;
-        --sidebar-foreground: #18180f;
-        --sidebar-primary: #18180f;
-        --sidebar-primary-foreground: #f7f5f0;
-        --sidebar-accent: #e4e0d6;
-        --sidebar-accent-foreground: #18180f;
-        --sidebar-border: #18180f1f;
-        --sidebar-ring: #18180f4d;
+        --sidebar: #f8fafc;
+        --sidebar-foreground: #0f172a;
+        --sidebar-primary: #3b82f6;
+        --sidebar-primary-foreground: #ffffff;
+        --sidebar-accent: #f1f5f9;
+        --sidebar-accent-foreground: #0f172a;
+        --sidebar-border: #e2e8f0;
+        --sidebar-ring: #3b82f64d;
       }
       .dark {
-        --background: #16160f;
-        --foreground: #f2efe6;
-        --card: #201f16;
-        --card-foreground: #f2efe6;
-        --popover: #201f16;
-        --popover-foreground: #f2efe6;
-        --primary: #f2efe6;
-        --primary-foreground: #16160f;
-        --secondary: #2b2a1f;
-        --secondary-foreground: #f2efe6;
-        --muted: #2b2a1f;
-        --muted-foreground: #a6a28d;
-        --accent: #d4493a;
-        --accent-foreground: #f7f5f0;
-        --destructive: #d4493a;
-        --destructive-foreground: #f7f5f0;
-        --border: #f2efe624;
+        --background: #0f172a;
+        --foreground: #f8fafc;
+        --card: #1e293b;
+        --card-foreground: #f8fafc;
+        --popover: #1e293b;
+        --popover-foreground: #f8fafc;
+        --primary: #3b82f6;
+        --primary-foreground: #f8fafc;
+        --secondary: #334155;
+        --secondary-foreground: #f8fafc;
+        --muted: #1e293b;
+        --muted-foreground: #94a3b8;
+        --accent: #60a5fa;
+        --accent-foreground: #0f172a;
+        --destructive: #ef4444;
+        --destructive-foreground: #f8fafc;
+        --border: #f8fafc1f;
         --input: transparent;
-        --input-background: #2b2a1f;
-        --switch-background: #4a4838;
-        --ring: #f2efe64d;
+        --input-background: #1e293b;
+        --switch-background: #334155;
+        --ring: #3b82f666;
         --font-weight-medium: 500;
         --font-weight-normal: 400;
-        --chart-1: #d4493a;
-        --chart-2: #6fb3a0;
-        --chart-3: #f2efe6;
-        --chart-4: #c2a878;
-        --chart-5: #2b2a1f;
-        --sidebar: #201f16;
-        --sidebar-foreground: #f2efe6;
-        --sidebar-primary: #f2efe6;
-        --sidebar-primary-foreground: #16160f;
-        --sidebar-accent: #2b2a1f;
-        --sidebar-accent-foreground: #f2efe6;
-        --sidebar-border: #f2efe624;
-        --sidebar-ring: #f2efe64d;
+        --chart-1: #3b82f6;
+        --chart-2: #22c55e;
+        --chart-3: #f59e0b;
+        --chart-4: #a855f7;
+        --chart-5: #64748b;
+        --sidebar: #1e293b;
+        --sidebar-foreground: #f8fafc;
+        --sidebar-primary: #3b82f6;
+        --sidebar-primary-foreground: #f8fafc;
+        --sidebar-accent: #334155;
+        --sidebar-accent-foreground: #f8fafc;
+        --sidebar-border: #f8fafc1f;
+        --sidebar-ring: #3b82f666;
       }
       @property --tw-translate-x {
         syntax: "*";
@@ -47531,17 +47513,42 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       [role="menu"],
       [role="listbox"] {
         border-radius: var(--radius);
-        -webkit-backdrop-filter: blur(14px) saturate(1.25);
-        backdrop-filter: blur(14px) saturate(1.25);
+        -webkit-backdrop-filter: blur(14px) saturate(1.2);
+        backdrop-filter: blur(14px) saturate(1.2);
         box-shadow:
-          inset 0 1px 0 color-mix(in oklab, #fff 18%, transparent),
+          inset 0 1px 0 color-mix(in oklab, #fff 8%, transparent),
           0 0 0 1px var(--crystal-edge),
-          0 10px 34px -12px color-mix(in oklab, var(--primary) 30%, transparent),
-          0 0 26px -10px var(--crystal-glow);
+          0 24px 56px -24px rgba(2, 6, 23, 0.8),
+          0 8px 22px -14px rgba(2, 6, 23, 0.65);
       }
       .bg-card,
       [data-slot="card"] {
-        background-color: color-mix(in oklab, var(--card) 82%, transparent) !important;
+        background-color: color-mix(in oklab, var(--card) 94%, transparent) !important;
+      }
+
+      /* ---- Dashboard panels: elevated cards with breathing room ---- */
+      .border-border.p-6 {
+        background-color: color-mix(in oklab, var(--card) 55%, transparent);
+        padding: 1.9rem;
+        margin-bottom: 2.75rem;
+        box-shadow:
+          inset 0 1px 0 color-mix(in oklab, #fff 6%, transparent),
+          0 18px 44px -22px rgba(2, 6, 23, 0.8);
+      }
+
+      /* ---- Section headings: larger + more breathing room ---- */
+      h1.font-bold {
+        font-size: 2.85rem !important;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+      h2.font-bold {
+        font-size: 2.1rem !important;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+      }
+      h2.font-bold.mb-6 {
+        margin-bottom: 2rem;
       }
       .bg-popover {
         background-color: color-mix(in oklab, var(--popover) 85%, transparent) !important;
