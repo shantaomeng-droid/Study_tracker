@@ -41103,6 +41103,135 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         const goalColor = goalDone ? "#10b981" : "#3b82f6";
         return C.jsxs(C.Fragment, {
           children: [
+            C.jsxs("div", {
+              className: "border border-border p-6 md:p-8 mb-12 mt-2",
+              style: {
+                borderRadius: "var(--radius)",
+                borderColor:
+                  studyStreak >= 3 ? streakColor : "var(--border)",
+                boxShadow:
+                  studyStreak >= 3
+                    ? `0 0 22px -8px ${streakColor}`
+                    : "none",
+              },
+              children: [
+                C.jsx("p", {
+                  className:
+                    "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-6",
+                  style: Ts,
+                  children: "Today's Progress",
+                }),
+                C.jsxs("div", {
+                  className: "grid grid-cols-1 md:grid-cols-3 gap-8",
+                  children: [
+                    C.jsxs("div", {
+                      className: "flex items-center gap-4",
+                      children: [
+                        C.jsxs("p", {
+                          className: "text-5xl font-bold shrink-0",
+                          style: {
+                            fontFamily: "'Playfair Display', serif",
+                            color: streakColor,
+                          },
+                          children: [
+                            studyStreak,
+                            " ",
+                            streakGold ? "🏆" : "🔥",
+                          ],
+                        }),
+                        C.jsxs("div", {
+                          className: "min-w-0",
+                          children: [
+                            C.jsx("p", {
+                              className:
+                                "text-[10px] tracking-[0.18em] uppercase text-muted-foreground",
+                              style: Ts,
+                              children: "Day streak",
+                            }),
+                            C.jsx("p", {
+                              className: "text-xs mt-1",
+                              style: ks,
+                              children: streakMsg,
+                            }),
+                            bestStreak > 1 &&
+                              C.jsxs("p", {
+                                className:
+                                  "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mt-1",
+                                style: Ts,
+                                children: ["Best: ", bestStreak, " days"],
+                              }),
+                          ],
+                        }),
+                      ],
+                    }),
+                    C.jsxs("div", {
+                      children: [
+                        C.jsxs("p", {
+                          className: "text-5xl font-bold",
+                          style: {
+                            fontFamily: "'Playfair Display', serif",
+                            color: "var(--accent)",
+                          },
+                          children: [
+                            todayHours,
+                            C.jsx("span", {
+                              className: "text-2xl",
+                              children: "h",
+                            }),
+                          ],
+                        }),
+                        C.jsx("p", {
+                          className:
+                            "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mt-1",
+                          style: Ts,
+                          children: "Studied today",
+                        }),
+                        C.jsxs("p", {
+                          className:
+                            "text-xs mt-1 text-muted-foreground",
+                          style: ks,
+                          children: [
+                            "Total ",
+                            totalHours,
+                            "h · Avg ",
+                            avgHours,
+                            "h/day",
+                          ],
+                        }),
+                      ],
+                    }),
+                    C.jsxs("div", {
+                      children: [
+                        C.jsx("p", {
+                          className: "text-5xl font-bold",
+                          style: {
+                            fontFamily: "'Playfair Display', serif",
+                          },
+                          children: o.week,
+                        }),
+                        C.jsx("p", {
+                          className:
+                            "text-[10px] tracking-[0.18em] uppercase text-muted-foreground mt-1",
+                          style: Ts,
+                          children: "Observations this week",
+                        }),
+                        C.jsxs("p", {
+                          className:
+                            "text-xs mt-1 text-muted-foreground",
+                          style: ks,
+                          children: [
+                            t,
+                            " total · ",
+                            u.length,
+                            " topics",
+                          ],
+                        }),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
             C.jsx("h1", {
               className: "text-4xl font-bold border-t border-border pt-6 mb-8",
               style: ks,
